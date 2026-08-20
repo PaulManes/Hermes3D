@@ -37,12 +37,20 @@ const numericMajor = (value) => {
   return match ? Number(match[1]) : null;
 };
 
+const tail = (name, lineCount = 80) => {
+  const text = read(path.join("logs", name));
+  if (!text) return "No log was produced.";
+  return text.split(/\r?\n/).slice(-lineCount).join("\n");
+};
+
 const auditSummary = (value) => value?.metadata?.vulnerabilities ?? {};
 const packageJson = JSON.parse(fs.readFileSync("package.json", "utf8"));
 const checks = parseCodes(read("verification-exit-codes.txt"));
 const auditCodes = parseCodes(read("audit-exit-codes.txt"));
-const allAudit = auditSummary(readJson("npm-audit-all.json"));
-const productionAudit = auditSummary(readJson("npm-audit-production.json"));
+const allAuditJson = readJson("npm-audit-all.json");
+const productionAuditJson = readJson("npm-audit-production.json");
+const allAudit = auditSummary(allAuditJson);
+const productionAudit = auditSummary(productionAuditJson);
 const packagesWithScripts = readJson("packages-with-scripts.json", []);
 const outdatedBefore = readJson("outdated-before.json", {});
 const scriptCount = Array.isArray(packagesWithScripts)
@@ -74,6 +82,44 @@ const heldMajorRows = Object.entries(outdatedBefore)
       `| ${name} | ${value.current ?? "unknown"} | ${value.wanted ?? "unknown"} | ${value.latest ?? "unknown"} |`,
   )
   .sort();
+
+const auditRows = Object.entries(allAuditJson?.vulnerabilities ?? {})
+  .map(([name, value]) => {
+    const via = Array.isArray(value?.via)
+      ? value.via
+          .map((entry) =>
+            typeof entry === "string"
+              ? entry
+              : entry?.title ?? entry?.name ?? "advisory",
+          )
+          .slice(0, 3)
+          .join("; ")
+      : "";
+    const fix =
+      value?.fixAvailable === true
+        ? "available"
+        : value?.fixAvailable && typeof value.fixAvailable === "object"
+          ? `${value.fixAvailable.name ?? name}@${value.fixAvailable.version ?? "unknown"}${value.fixAvailable.isSemVerMajor ? " (major)" : ""}`
+          : "none reported";
+    return `| ${name} | ${value?.severity ?? "unknown"} | ${value?.range ?? "unknown"} | ${fix} | ${via || "—"} |`;
+  })
+  .sort();
+
+const logMap = {
+  peer_tree: ["npm-ls.log", "Peer dependency tree"],
+  lint: ["lint.log", "Lint"],
+  typecheck: ["typecheck.log", "Typecheck"],
+  test: ["test.log", "Unit tests"],
+  build: ["build.log", "Production build"],
+  smoke: ["smoke.log", "Dev-server smoke test"],
+};
+
+const failedLogSections = Object.entries(logMap)
+  .filter(([key]) => String(checks[key]) !== "0")
+  .map(
+    ([key, [file, label]]) =>
+      `### ${label} — exit ${checks[key] ?? "missing"}\n\n\`\`\`text\n${tail(file)}\n\`\`\``,
+  );
 
 const report = `# Dependency Refresh Report
 
@@ -107,6 +153,8 @@ ${read("toolchain.txt") || "missing"}
 | All dependencies | ${allAudit.critical ?? 0} | ${allAudit.high ?? 0} | ${allAudit.moderate ?? 0} | ${allAudit.low ?? 0} | ${allAudit.total ?? 0} | ${auditCodes.all ?? "missing"} |
 | Production only | ${productionAudit.critical ?? 0} | ${productionAudit.high ?? 0} | ${productionAudit.moderate ?? 0} | ${productionAudit.low ?? 0} | ${productionAudit.total ?? 0} | ${auditCodes.production ?? "missing"} |
 
+${auditRows.length > 0 ? `### Reported vulnerabilities\n\n| Package | Severity | Affected range | Fix | Advisory summary |\n| --- | --- | --- | --- | --- |\n${auditRows.join("\n")}` : "No vulnerabilities were reported by npm audit."}
+
 ## Lifecycle-script surface
 
 The refreshed installation contains **${scriptCount}** packages with install-time lifecycle scripts. The packages were installed with scripts disabled, inventoried from their manifests, and only then rebuilt inside the disposable runner. The complete inventory is in \`packages-with-scripts.json\`.
@@ -121,9 +169,13 @@ ${heldMajorRows.length > 0 ? `| Package | Current | Latest compatible in current
 | --- | --- | --- |
 ${dependencyRows.join("\n")}
 
+## Failure diagnostics
+
+${failedLogSections.length > 0 ? failedLogSections.join("\n\n") : "All verification logs completed successfully."}
+
 ## Commit policy
 
-The workflow commits \`package.json\`, \`package-lock.json\`, and this report only when both npm audits and every verification gate pass. Failed candidates remain available only in the short-lived audit artifact for diagnosis.
+This report is published even when a candidate fails so the failure can be diagnosed without access to the runner. The workflow commits \`package.json\` and \`package-lock.json\` only when both npm audits and every verification gate pass.
 
 ## Raw evidence artifact
 
