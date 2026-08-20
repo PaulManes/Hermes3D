@@ -5,7 +5,11 @@
   "license": "MIT",
   "scripts": {
     "dev": "node server/index.js --dev",
+    "dev:codex": "node scripts/dev-codex-observer.mjs",
     "dev:https": "node server/index.js --dev --https",
+    "codex-observer": "node server/codex-observer-adapter.js",
+    "codex:install-hooks": "node scripts/install-codex-hooks.mjs",
+    "codex:uninstall-hooks": "node scripts/uninstall-codex-hooks.mjs",
     "hermes-adapter": "node server/hermes-gateway-adapter.js",
     "demo-gateway": "node server/demo-gateway-adapter.js",
     "build": "next build",
