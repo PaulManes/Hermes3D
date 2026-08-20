@@ -151,6 +151,28 @@ jobs:
           if-no-files-found: error
           retention-days: 14
 
+      - name: Publish audit report
+        if: always()
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          if [[ ! -f audit/dependencies/REPORT.md ]]; then
+            echo "No report was generated."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f -- audit/dependencies/REPORT.md
+          if git diff --cached --quiet; then
+            echo "Dependency report is unchanged."
+            exit 0
+          fi
+          git commit -m "chore: publish dependency refresh report [skip ci]"
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            HEAD:hardening/codex-observer
+
       - name: Enforce clean audit and verification results
         if: always()
         shell: bash
@@ -180,11 +202,11 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- package.json package-lock.json audit/dependencies/REPORT.md
+          git add -- package.json package-lock.json
           if git diff --cached --quiet; then
             echo "No verified dependency changes to commit."
             exit 0
           fi
-          git commit -m "chore: refresh compatible dependencies and capture audit report [skip ci]"
+          git commit -m "chore: refresh compatible dependencies [skip ci]"
           git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
             HEAD:hardening/codex-observer
