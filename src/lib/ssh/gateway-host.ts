@@ -73,16 +73,16 @@ export const resolveConfiguredSshPort = (env: NodeJS.ProcessEnv = process.env): 
 
 export const resolveConfiguredSshStrictHostKeyChecking = (
   env: NodeJS.ProcessEnv = process.env
-): "accept-new" | "yes" | "no" => {
+): "accept-new" | "yes" => {
   const rawValue = env[SSH_STRICT_HOST_KEY_ENV]?.trim().toLowerCase() ?? "";
   if (!rawValue) {
     return "accept-new";
   }
-  if (rawValue === "accept-new" || rawValue === "yes" || rawValue === "no") {
+  if (rawValue === "accept-new" || rawValue === "yes") {
     return rawValue;
   }
   throw new Error(
-    `${SSH_STRICT_HOST_KEY_ENV} must be one of: accept-new, yes, no.`
+    `${SSH_STRICT_HOST_KEY_ENV} must be one of: accept-new, yes. Disabling host-key verification is not supported.`
   );
 };
 
@@ -173,7 +173,7 @@ export const parseJsonOutput = (raw: string, label: string): unknown => {
 export const runSshJson = (params: {
   sshTarget: string;
   sshPort?: number | null;
-  strictHostKeyChecking?: "accept-new" | "yes" | "no";
+  strictHostKeyChecking?: "accept-new" | "yes";
   argv: string[];
   label: string;
   input?: string;
