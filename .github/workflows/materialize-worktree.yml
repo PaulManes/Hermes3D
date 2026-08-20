@@ -29,8 +29,19 @@ jobs:
           git archive --format=tar.gz --output=audit/tmp/hermes3d-worktree.tar.gz HEAD
           shasum -a 256 audit/tmp/hermes3d-worktree.tar.gz \
             > audit/tmp/hermes3d-worktree.sha256
+          printf '%s\n' "${GITHUB_RUN_ID}" > audit/tmp/materialize-run-id.txt
 
-      - name: Commit temporary archive
+      - name: Upload temporary archive
+        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
+        with:
+          name: hermes3d-materialized-worktree
+          path: |
+            audit/tmp/hermes3d-worktree.tar.gz
+            audit/tmp/hermes3d-worktree.sha256
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Publish run id
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         shell: bash
@@ -38,7 +49,7 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f -- audit/tmp/hermes3d-worktree.tar.gz audit/tmp/hermes3d-worktree.sha256
-          git commit -m "chore: materialize temporary audit worktree [skip ci]"
+          git add -f -- audit/tmp/materialize-run-id.txt
+          git commit -m "chore: publish temporary materialization run id [skip ci]"
           git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
             HEAD:hardening/codex-observer
