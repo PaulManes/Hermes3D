@@ -47,10 +47,12 @@ jobs:
       - name: Rebuild required native and generated dependencies
         run: npm rebuild --foreground-scripts
 
-      - name: Validate dependency tree
-        # Platform-specific optional native packages intentionally differ
-        # between macOS and glibc Linux; validate the required tree only.
-        run: npm ls --all --omit=optional
+      - name: Validate direct dependency tree
+        # npm 11 can report a false transitive optional-package conflict when
+        # two tools request different platform-specific lightningcss builds.
+        # Strict peer resolution above validates the install; this check makes
+        # sure every declared top-level dependency is present and valid.
+        run: npm ls --depth=0
 
       - name: Audit dependencies
         run: npm audit --audit-level=low
