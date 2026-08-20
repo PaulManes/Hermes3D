@@ -48,7 +48,9 @@ jobs:
         run: npm rebuild --foreground-scripts
 
       - name: Validate dependency tree
-        run: npm ls --all
+        # Platform-specific optional native packages intentionally differ
+        # between macOS and glibc Linux; validate the required tree only.
+        run: npm ls --all --omit=optional
 
       - name: Audit dependencies
         run: npm audit --audit-level=low
