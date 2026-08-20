@@ -15,7 +15,10 @@ vi.mock("node:child_process", async () => {
   };
 });
 
-import { runSshJson } from "@/lib/ssh/gateway-host";
+import {
+  resolveConfiguredSshStrictHostKeyChecking,
+  runSshJson,
+} from "@/lib/ssh/gateway-host";
 
 const mockedSpawnSync = vi.mocked(spawnSync);
 
@@ -95,5 +98,13 @@ describe("runSshJson", () => {
       }),
     ).toThrow("SSH port must be between 1 and 65535");
     expect(mockedSpawnSync).not.toHaveBeenCalled();
+  });
+
+  it("does not allow host-key verification to be disabled", () => {
+    expect(() =>
+      resolveConfiguredSshStrictHostKeyChecking({
+        HERMES_GATEWAY_SSH_STRICT_HOST_KEY_CHECKING: "no",
+      }),
+    ).toThrow("Disabling host-key verification is not supported");
   });
 });
