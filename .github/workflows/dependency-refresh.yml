@@ -8,9 +8,14 @@ on:
     paths:
       - .github/workflows/dependency-refresh.yml
       - scripts/generate-dependency-report.mjs
+      - scripts/list-dependency-lifecycle-scripts.mjs
 
 permissions:
   contents: write
+
+concurrency:
+  group: dependency-refresh-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   refresh:
@@ -22,15 +27,16 @@ jobs:
       NPM_CONFIG_AUDIT: "false"
       NPM_CONFIG_FUND: "false"
     steps:
-      - name: Check out hardening branch
+      - name: Check out hardening branch without persisted credentials
         uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          persist-credentials: false
 
-      - name: Use current Node LTS
+      - name: Use Node.js 24 LTS
         uses: actions/setup-node@v5
         with:
-          node-version: "lts/*"
+          node-version: "24"
           cache: npm
 
       - name: Record toolchain
@@ -45,37 +51,42 @@ jobs:
             echo "commit=${GITHUB_SHA}"
           } | tee audit/dependencies/toolchain.txt
 
-      - name: Record current direct dependency drift
-        continue-on-error: true
+      - name: Record current dependency drift
         shell: bash
         run: |
+          set +e
           npm outdated --json > audit/dependencies/outdated-before.json 2> audit/dependencies/outdated-before.stderr
+          status=$?
+          if [[ ! -s audit/dependencies/outdated-before.json ]]; then
+            printf '{}\n' > audit/dependencies/outdated-before.json
+          fi
+          printf 'npm_outdated=%s\n' "$status" > audit/dependencies/outdated-exit-code.txt
+          exit 0
 
-      - name: Update direct dependencies and regenerate lockfile without scripts
+      - name: Refresh patch and minor dependency releases
         shell: bash
         run: |
           set -euo pipefail
-          npx --yes npm-check-updates@latest --target latest --upgrade
-          npm install --package-lock-only --ignore-scripts
+          npx --yes npm-check-updates@latest --target minor --upgrade \
+            | tee audit/dependencies/logs/npm-check-updates.log
+          npm install --package-lock-only --ignore-scripts --strict-peer-deps
 
       - name: Install dependency tree with lifecycle scripts disabled
         shell: bash
         run: |
           set -euo pipefail
           rm -rf node_modules
-          npm ci --ignore-scripts
+          npm ci --ignore-scripts --strict-peer-deps
 
-      - name: Record packages that declare scripts
-        shell: bash
-        run: |
-          set -euo pipefail
-          npm query ':attr(scripts)' > audit/dependencies/packages-with-scripts.json
+      - name: Inventory install-time lifecycle scripts
+        run: node scripts/list-dependency-lifecycle-scripts.mjs
 
       - name: Execute required lifecycle scripts only on disposable runner
         shell: bash
         run: |
           set -euo pipefail
-          npm rebuild
+          npm rebuild --foreground-scripts 2>&1 \
+            | tee audit/dependencies/logs/lifecycle-rebuild.log
 
       - name: Run npm security audits
         shell: bash
@@ -85,13 +96,16 @@ jobs:
           all_status=$?
           npm audit --omit=dev --json > audit/dependencies/npm-audit-production.json
           production_status=$?
-          printf 'all=%s\nproduction=%s\n' "$all_status" "$production_status" > audit/dependencies/audit-exit-codes.txt
+          printf 'all=%s\nproduction=%s\n' "$all_status" "$production_status" \
+            > audit/dependencies/audit-exit-codes.txt
           exit 0
 
       - name: Run verification suite
         shell: bash
         run: |
           set +e
+          npm ls --all > audit/dependencies/logs/npm-ls.log 2>&1
+          peer_tree_status=$?
           npm run lint > audit/dependencies/logs/lint.log 2>&1
           lint_status=$?
           npm run typecheck > audit/dependencies/logs/typecheck.log 2>&1
@@ -103,6 +117,7 @@ jobs:
           npm run smoke:dev-server > audit/dependencies/logs/smoke.log 2>&1
           smoke_status=$?
           {
+            echo "peer_tree=$peer_tree_status"
             echo "lint=$lint_status"
             echo "typecheck=$typecheck_status"
             echo "test=$test_status"
@@ -111,33 +126,33 @@ jobs:
           } | tee audit/dependencies/verification-exit-codes.txt
           exit 0
 
+      - name: Capture candidate dependency files
+        if: always()
+        shell: bash
+        run: |
+          set +e
+          mkdir -p audit/dependencies
+          cp package.json audit/dependencies/candidate-package.json
+          cp package-lock.json audit/dependencies/candidate-package-lock.json
+          git diff -- package.json package-lock.json \
+            > audit/dependencies/dependency-refresh.patch
+          exit 0
+
       - name: Generate dependency report
+        if: always()
         run: node scripts/generate-dependency-report.mjs
 
       - name: Upload raw audit evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: hermes3d-dependency-audit
           path: audit/dependencies
-          if-no-files-found: warn
+          if-no-files-found: error
           retention-days: 14
 
-      - name: Commit refreshed dependencies and report
-        shell: bash
-        run: |
-          set -euo pipefail
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- package.json package-lock.json audit/dependencies/REPORT.md
-          if git diff --cached --quiet; then
-            echo "No dependency changes to commit."
-            exit 0
-          fi
-          git commit -m "chore: refresh dependencies and capture audit report [skip ci]"
-          git push origin HEAD:hardening/codex-observer
-
       - name: Enforce clean audit and verification results
+        if: always()
         shell: bash
         run: |
           set -euo pipefail
@@ -156,3 +171,20 @@ jobs:
             done < "$file"
           done
           exit "$failed"
+
+      - name: Commit verified dependency refresh
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- package.json package-lock.json audit/dependencies/REPORT.md
+          if git diff --cached --quiet; then
+            echo "No verified dependency changes to commit."
+            exit 0
+          fi
+          git commit -m "chore: refresh compatible dependencies and capture audit report [skip ci]"
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            HEAD:hardening/codex-observer
