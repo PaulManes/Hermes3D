@@ -4,12 +4,14 @@
 FROM node:20-slim AS deps
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --ignore-scripts --omit=dev
+RUN npm ci --ignore-scripts --omit=dev \
+    && npm rebuild --foreground-scripts
 
 FROM node:20-slim AS builder
 WORKDIR /app
 COPY package.json package-lock.json ./
-RUN npm ci --ignore-scripts
+RUN npm ci --ignore-scripts \
+    && npm rebuild --foreground-scripts
 COPY . .
 ENV NEXT_TELEMETRY_DISABLED=1
 # Build-time gateway URL (overridden at runtime by HERMES3D_GATEWAY_URL).
@@ -21,20 +23,21 @@ WORKDIR /app
 ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED=1
 
-# Links images to the repository on GHCR, so packages created by a push
-# automatically grant this repo's workflows access and show up on the repo page.
-LABEL org.opencontainers.image.source="https://github.com/iamlukethedev/Hermes3D"
-LABEL org.opencontainers.image.description="Hermes3D — a 3D workspace for AI agents."
+LABEL org.opencontainers.image.source="https://github.com/PaulManes/Hermes3D"
+LABEL org.opencontainers.image.description="Hardened Hermes3D — a local 3D workspace for observing AI agents."
 LABEL org.opencontainers.image.licenses="MIT"
 
-# Copy built app + custom server + production node_modules only.
-COPY --from=builder /app/.next ./.next
-COPY --from=builder /app/public ./public
-COPY --from=builder /app/server ./server
-COPY --from=deps /app/node_modules ./node_modules
-COPY --from=builder /app/package.json ./package.json
-COPY --from=builder /app/next.config.ts ./next.config.ts
+# Copy only runtime artifacts and keep them owned by the built-in unprivileged
+# Node user. The application can still write its explicitly mounted Studio
+# state directory, but it does not run as root inside the container.
+COPY --chown=node:node --from=builder /app/.next ./.next
+COPY --chown=node:node --from=builder /app/public ./public
+COPY --chown=node:node --from=builder /app/server ./server
+COPY --chown=node:node --from=deps /app/node_modules ./node_modules
+COPY --chown=node:node --from=builder /app/package.json ./package.json
+COPY --chown=node:node --from=builder /app/next.config.ts ./next.config.ts
 
+USER node
 EXPOSE 3000
 
 CMD ["node", "server/index.js"]
