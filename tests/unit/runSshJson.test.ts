@@ -103,6 +103,7 @@ describe("runSshJson", () => {
   it("does not allow host-key verification to be disabled", () => {
     expect(() =>
       resolveConfiguredSshStrictHostKeyChecking({
+        ...process.env,
         HERMES_GATEWAY_SSH_STRICT_HOST_KEY_CHECKING: "no",
       }),
     ).toThrow("Disabling host-key verification is not supported");
