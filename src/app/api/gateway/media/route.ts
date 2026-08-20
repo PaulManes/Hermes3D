@@ -13,7 +13,7 @@ import * as path from "node:path";
 
 export const runtime = "nodejs";
 
-const MAX_MEDIA_BYTES = 25 * 1024 * 1024;
+const MAX_MEDIA_BYTES = 8 * 1024 * 1024;
 
 const MIME_BY_EXT: Record<string, string> = {
   ".png": "image/png",
@@ -22,6 +22,7 @@ const MIME_BY_EXT: Record<string, string> = {
   ".gif": "image/gif",
   ".webp": "image/webp",
 };
+const ALLOWED_MIME_TYPES = new Set(Object.values(MIME_BY_EXT));
 
 const expandTildeLocal = (value: string): string => {
   const trimmed = value.trim();
@@ -34,7 +35,7 @@ const validateRawMediaPath = (raw: string): { trimmed: string; mime: string } =>
   const trimmed = raw.trim();
   if (!trimmed) throw new Error("path is required");
   if (trimmed.length > 4096) throw new Error("path too long");
-  if (/[^\S\r\n]*[\0\r\n]/.test(trimmed)) throw new Error("path contains invalid characters");
+  if (/[\0\r\n]/.test(trimmed)) throw new Error("path contains invalid characters");
 
   const ext = path.extname(trimmed).toLowerCase();
   const mime = MIME_BY_EXT[ext];
@@ -75,9 +76,10 @@ const validateRemoteMediaPath = (raw: string): { remotePath: string; mime: strin
     throw new Error("path must be absolute or start with ~/");
   }
 
-  // Remote side enforces ~/.hermes; this guard lets Studio on macOS request
-  // /home/ubuntu/.hermes/... without tripping local homedir checks.
-  const normalized = trimmed.replaceAll("\\\\", "/");
+  // Remote side performs the authoritative realpath check under the remote
+  // account's ~/.hermes directory. This lightweight check rejects obvious
+  // unrelated paths before opening an SSH process.
+  const normalized = trimmed.replaceAll("\\", "/");
   const inHermesStateDir =
     normalized === "~/.hermes" ||
     normalized.startsWith("~/.hermes/") ||
@@ -124,7 +126,6 @@ set -euo pipefail
 python3 - "$1" <<'PY'
 import base64
 import json
-import mimetypes
 import os
 import pathlib
 import sys
@@ -154,9 +155,9 @@ mime = {
   ".jpeg": "image/jpeg",
   ".gif": "image/gif",
   ".webp": "image/webp",
-}.get(ext) or (mimetypes.guess_type(str(resolved))[0] or "")
+}.get(ext) or ""
 
-if not mime.startswith("image/"):
+if not mime:
   print(json.dumps({"error": f"Unsupported media extension: {ext or '(none)'}"}))
   raise SystemExit(5)
 
@@ -180,6 +181,14 @@ const resolveSshTarget = (): string | null => {
   return resolveGatewaySshTargetFromGatewayUrl(gatewayUrl, process.env);
 };
 
+const mediaHeaders = (mime: string, size: number): HeadersInit => ({
+  "Content-Type": mime,
+  "Content-Length": String(size),
+  "Cache-Control": "no-store",
+  "X-Content-Type-Options": "nosniff",
+  "Content-Security-Policy": "default-src 'none'; sandbox",
+});
+
 export async function GET(request: Request) {
   try {
     const { searchParams } = new URL(request.url);
@@ -192,13 +201,7 @@ export async function GET(request: Request) {
       const allowedRoot = path.join(os.homedir(), ".hermes");
       const { bytes, size } = await readLocalMedia(resolved, allowedRoot);
       const body = new Blob([Uint8Array.from(bytes)], { type: mime });
-      return new Response(body, {
-        headers: {
-          "Content-Type": mime,
-          "Content-Length": String(size),
-          "Cache-Control": "no-store",
-        },
-      });
+      return new Response(body, { headers: mediaHeaders(mime, size) });
     }
 
     const { remotePath, mime } = validateRemoteMediaPath(rawPath);
@@ -217,21 +220,25 @@ export async function GET(request: Request) {
       size?: number;
     };
 
-    const b64 = payload.data ?? "";
-    if (!b64) {
-      throw new Error("Remote media fetch returned empty data");
+    if (payload.ok !== true || !payload.data) {
+      throw new Error("Remote media fetch returned invalid data");
+    }
+    if (!Number.isInteger(payload.size) || (payload.size ?? -1) < 0 || (payload.size ?? 0) > MAX_MEDIA_BYTES) {
+      throw new Error("Remote media fetch returned an invalid size");
+    }
+    const responseMime = payload.mime || mime;
+    if (!ALLOWED_MIME_TYPES.has(responseMime) || responseMime !== mime) {
+      throw new Error("Remote media fetch returned an invalid content type");
     }
 
-    const buf = Buffer.from(b64, "base64");
-    const responseMime = payload.mime || mime;
+    const buf = Buffer.from(payload.data, "base64");
+    if (buf.length !== payload.size || buf.length > MAX_MEDIA_BYTES) {
+      throw new Error("Remote media fetch returned a mismatched payload size");
+    }
     const body = new Blob([Uint8Array.from(buf)], { type: responseMime });
 
     return new Response(body, {
-      headers: {
-        "Content-Type": responseMime,
-        "Content-Length": String(buf.length),
-        "Cache-Control": "no-store",
-      },
+      headers: mediaHeaders(responseMime, buf.length),
     });
   } catch (err) {
     const message = err instanceof Error ? err.message : "Failed to fetch media";
