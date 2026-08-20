@@ -104,9 +104,12 @@ describe("Codex Observer core", () => {
     });
 
     const builder = state.listAgents().find((agent) => agent.role === "Builder");
-    expect(builder?.activity).toBe("coding");
-    const preview = state.sessionPreviews([`agent:${builder?.id}:main`])[0];
-    expect(preview.items.at(-1)?.text).toContain("apply_patch");
+    expect(builder).toBeDefined();
+    if (!builder) throw new Error("Builder subagent was not created.");
+    expect(builder.activity).toBe("coding");
+    const preview = state.sessionPreviews([`agent:${builder.id}:main`])[0];
+    const latest = preview.items[preview.items.length - 1];
+    expect(latest?.text).toContain("apply_patch");
   });
 
   it("redacts common secrets before they enter activity history", () => {
@@ -123,7 +126,9 @@ describe("Codex Observer core", () => {
     });
 
     const mainAgent = state.listAgents().find((agent) => agent.role === "Main Agent");
-    const history = state.historyFor(`agent:${mainAgent?.id}:main`);
+    expect(mainAgent).toBeDefined();
+    if (!mainAgent) throw new Error("Main agent was not created.");
+    const history = state.historyFor(`agent:${mainAgent.id}:main`);
     const joined = JSON.stringify(history);
     expect(joined).toContain("[REDACTED]");
     expect(joined).not.toContain("super-secret-token");
