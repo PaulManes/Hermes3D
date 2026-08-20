@@ -71,6 +71,18 @@ jobs:
             | tee audit/dependencies/logs/npm-check-updates.log
           npm install --package-lock-only --ignore-scripts --strict-peer-deps
 
+      - name: Apply non-breaking npm audit fixes to the lockfile
+        shell: bash
+        run: |
+          set +e
+          npm audit fix --package-lock-only --ignore-scripts --strict-peer-deps \
+            > audit/dependencies/logs/npm-audit-fix.log 2>&1
+          status=$?
+          printf 'npm_audit_fix=%s\n' "$status" \
+            > audit/dependencies/audit-fix-exit-code.txt
+          cat audit/dependencies/logs/npm-audit-fix.log
+          exit 0
+
       - name: Install dependency tree with lifecycle scripts disabled
         shell: bash
         run: |
