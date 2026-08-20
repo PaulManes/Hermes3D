@@ -12,7 +12,7 @@ This pass updates every direct dependency to the newest patch or minor release a
 node=v24.18.0
 npm=11.16.0
 runner=macOS-ARM64
-commit=3a58a7db28c96ad581dd47eeb8d69cd625634336
+commit=c8751ef9a40bc6cbfeb4ef6b2c8030a84b1d8d4a
 ```
 
 ## Verification
@@ -30,16 +30,10 @@ commit=3a58a7db28c96ad581dd47eeb8d69cd625634336
 
 | Scope | Critical | High | Moderate | Low | Total | Exit code |
 | --- | ---: | ---: | ---: | ---: | ---: | ---: |
-| All dependencies | 0 | 2 | 0 | 1 | 3 | 1 |
+| All dependencies | 0 | 0 | 0 | 0 | 0 | 0 |
 | Production only | 0 | 0 | 0 | 0 | 0 | 0 |
 
-### Reported vulnerabilities
-
-| Package | Severity | Affected range | Fix | Advisory summary |
-| --- | --- | --- | --- | --- |
-| @babel/core | low | <=7.29.0 | available | @babel/core: Arbitrary File Read via sourceMappingURL Comment |
-| brace-expansion | high | <=1.1.17 || 2.0.0 - 2.1.3 | available | brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups; brace-expansion: DoS via exponential-time expansion of consecutive non-expanding {} groups; brace-expansion: DoS via unbounded expansion length causing an out-of-memory process crash |
-| js-yaml | high | 4.0.0 - 4.3.0 | available | JS-YAML: Quadratic-complexity DoS in merge key handling via repeated aliases; js-yaml: YAML merge-key chains can force quadratic CPU consumption; JS-YAML: Quadratic CPU consumption in !!omap resolution (3.x and 4.x) — CVE-2026-59870 fix not backported |
+No vulnerabilities were reported by npm audit.
 
 ## Lifecycle-script surface
 
