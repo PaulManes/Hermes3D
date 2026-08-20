@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - hardening/codex-observer
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    name: Verify (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 45
+    env:
+      CI: "true"
+      NEXT_TELEMETRY_DISABLED: "1"
+      NPM_CONFIG_FUND: "false"
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      - name: Use Node.js 24 LTS
+        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
+        with:
+          node-version: "24"
+          cache: npm
+
+      - name: Install with lifecycle scripts disabled
+        run: npm ci --ignore-scripts --strict-peer-deps
+
+      - name: Rebuild required native and generated dependencies
+        run: npm rebuild --foreground-scripts
+
+      - name: Validate dependency tree
+        run: npm ls --all
+
+      - name: Audit all dependencies
+        run: npm audit --audit-level=low
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm run test -- --run
+
+      - name: Production build
+        run: npm run build
+
+      - name: Development server smoke test
+        run: npm run smoke:dev-server
