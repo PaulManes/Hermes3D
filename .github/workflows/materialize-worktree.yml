@@ -1,0 +1,44 @@
+name: Materialize worktree
+
+on:
+  push:
+    branches:
+      - hardening/codex-observer
+    paths:
+      - .github/workflows/materialize-worktree.yml
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  materialize:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+
+      - name: Archive tracked worktree
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p audit/tmp
+          git archive --format=tar.gz --output=audit/tmp/hermes3d-worktree.tar.gz HEAD
+          shasum -a 256 audit/tmp/hermes3d-worktree.tar.gz \
+            > audit/tmp/hermes3d-worktree.sha256
+
+      - name: Commit temporary archive
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -f -- audit/tmp/hermes3d-worktree.tar.gz audit/tmp/hermes3d-worktree.sha256
+          git commit -m "chore: materialize temporary audit worktree [skip ci]"
+          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            HEAD:hardening/codex-observer
