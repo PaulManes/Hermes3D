@@ -1,0 +1,2961 @@
+{
+  "generatedAt": "2026-08-20T21:17:43.561Z",
+  "commit": "57e244b0260feed0d80a841e55f87b4505fb31e8",
+  "trackedFileCount": 632,
+  "counts": {
+    "critical": 0,
+    "high": 42,
+    "medium": 218,
+    "low": 0,
+    "info": 2
+  },
+  "blockingCount": 0,
+  "findings": [
+    {
+      "severity": "high",
+      "category": "credential-access",
+      "title": "Sensitive host credential path is referenced",
+      "file": ".gitignore",
+      "line": 34,
+      "snippet": "id_rsa",
+      "blocking": false,
+      "recommendation": "Remove broad credential access or scope it to an explicit user-selected file with clear consent."
+    },
+    {
+      "severity": "high",
+      "category": "credential-access",
+      "title": "Sensitive host credential path is referenced",
+      "file": ".gitignore",
+      "line": 35,
+      "snippet": "id_rsa.pub",
+      "blocking": false,
+      "recommendation": "Remove broad credential access or scope it to an explicit user-selected file with clear consent."
+    },
+    {
+      "severity": "high",
+      "category": "credential-access",
+      "title": "Sensitive host credential path is referenced",
+      "file": ".gitignore",
+      "line": 36,
+      "snippet": "id_ed25519",
+      "blocking": false,
+      "recommendation": "Remove broad credential access or scope it to an explicit user-selected file with clear consent."
+    },
+    {
+      "severity": "high",
+      "category": "credential-access",
+      "title": "Sensitive host credential path is referenced",
+      "file": ".gitignore",
+      "line": 37,
+      "snippet": "id_ed25519.pub",
+      "blocking": false,
+      "recommendation": "Remove broad credential access or scope it to an explicit user-selected file with clear consent."
+    },
+    {
+      "severity": "high",
+      "category": "host-mutation",
+      "title": "Persistent or privileged host mutation command",
+      "file": "docs/hermes-agent-tailscale.md",
+      "line": 145,
+      "snippet": "launchctl load ~/Library/LaunchAgents/dev.hermes3d.serve.plist",
+      "blocking": false,
+      "recommendation": "Keep this opt-in, show the exact command, and avoid executing it from normal application startup."
+    },
+    {
+      "severity": "high",
+      "category": "host-mutation",
+      "title": "Persistent or privileged host mutation command",
+      "file": "docs/hermes-agent-tailscale.md",
+      "line": 165,
+      "snippet": "systemctl --user enable --now hermes-serve",
+      "blocking": false,
+      "recommendation": "Keep this opt-in, show the exact command, and avoid executing it from normal application startup."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "scripts/cleanup-ux-artifacts.mjs",
+      "line": 2,
+      "snippet": "import { spawnSync } from \"node:child_process\";",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "scripts/cleanup-ux-artifacts.mjs",
+      "line": 41,
+      "snippet": "return spawnSync(command, args, { encoding: \"utf8\" });",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "scripts/hermes3doctor.mjs",
+      "line": 1,
+      "snippet": "import { execFileSync } from \"node:child_process\";",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "scripts/hermes3doctor.mjs",
+      "line": 175,
+      "snippet": "const branch = execFileSync(\"git\", [\"rev-parse\", \"--abbrev-ref\", \"HEAD\"], {",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "scripts/hermes3doctor.mjs",
+      "line": 181,
+      "snippet": "execFileSync(\"git\", [\"status\", \"--porcelain\"], {",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "scripts/smoke-dev-server.mjs",
+      "line": 1,
+      "snippet": "import { spawn } from \"node:child_process\";",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "scripts/smoke-dev-server.mjs",
+      "line": 25,
+      "snippet": "const child = spawn(process.execPath, [\"server/index.js\", \"--dev\"], {",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "scripts/static-security-audit.mjs",
+      "line": 1,
+      "snippet": "import { execFileSync } from \"node:child_process\";",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "scripts/static-security-audit.mjs",
+      "line": 47,
+      "snippet": "execFileSync(\"git\", args, {",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "scripts/static-security-audit.mjs",
+      "line": 172,
+      "snippet": "pattern: /(?:node:child_process|child_process|\\bexecFileSync\\s*\\(|\\bexecFile\\s*\\(|\\bexecSync\\s*\\(|\\bspawnSync\\s*\\(|\\bspawn\\s*\\(|\\bfork\\s*\\()/g,",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "host-mutation",
+      "title": "Persistent or privileged host mutation command",
+      "file": "scripts/static-security-audit.mjs",
+      "line": 186,
+      "snippet": "pattern: /\\b(?:sudo|launchctl|systemctl|crontab|defaults\\s+write|security\\s+add-trusted-cert|chmod\\s+[0-7]{3,4}|chown)\\b/g,",
+      "blocking": false,
+      "recommendation": "Keep this opt-in, show the exact command, and avoid executing it from normal application startup."
+    },
+    {
+      "severity": "high",
+      "category": "credential-access",
+      "title": "Sensitive host credential path is referenced",
+      "file": "scripts/static-security-audit.mjs",
+      "line": 193,
+      "snippet": "pattern: /(?:~\\/|\\/Users\\/[^/]+\\/|process\\.env\\.HOME[^\\n]{0,120})?(?:\\.ssh|\\.aws|\\.gnupg|Keychains|id_rsa|id_ed25519)/g,",
+      "blocking": false,
+      "recommendation": "Remove broad credential access or scope it to an explicit user-selected file with clear consent."
+    },
+    {
+      "severity": "high",
+      "category": "host-mutation",
+      "title": "Persistent or privileged host mutation command",
+      "file": "server/index.js",
+      "line": 61,
+      "snippet": "console.info(`  sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain \"${CERT_PATH}\"\\n`);",
+      "blocking": false,
+      "recommendation": "Keep this opt-in, show the exact command, and avoid executing it from normal application startup."
+    },
+    {
+      "severity": "high",
+      "category": "credential-access",
+      "title": "Sensitive host credential path is referenced",
+      "file": "server/index.js",
+      "line": 61,
+      "snippet": "console.info(`  sudo security add-trusted-cert -d -r trustRoot -k /Library/Keychains/System.keychain \"${CERT_PATH}\"\\n`);",
+      "blocking": false,
+      "recommendation": "Remove broad credential access or scope it to an explicit user-selected file with clear consent."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "src/lib/office/github.ts",
+      "line": 1,
+      "snippet": "import * as childProcess from \"node:child_process\";",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "src/lib/office/github.ts",
+      "line": 124,
+      "snippet": "const result = childProcess.spawnSync(command, args, {",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "credential-access",
+      "title": "Sensitive host credential path is referenced",
+      "file": "src/lib/ssh/agent-state.ts",
+      "line": 118,
+      "snippet": "sshTarget: params.sshTarget,",
+      "blocking": false,
+      "recommendation": "Remove broad credential access or scope it to an explicit user-selected file with clear consent."
+    },
+    {
+      "severity": "high",
+      "category": "credential-access",
+      "title": "Sensitive host credential path is referenced",
+      "file": "src/lib/ssh/agent-state.ts",
+      "line": 132,
+      "snippet": "sshTarget: params.sshTarget,",
+      "blocking": false,
+      "recommendation": "Remove broad credential access or scope it to an explicit user-selected file with clear consent."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "src/lib/ssh/gateway-host.ts",
+      "line": 2,
+      "snippet": "import * as childProcess from \"node:child_process\";",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "credential-access",
+      "title": "Sensitive host credential path is referenced",
+      "file": "src/lib/ssh/gateway-host.ts",
+      "line": 157,
+      "snippet": "if (typeof params.sshPort === \"number\") {",
+      "blocking": false,
+      "recommendation": "Remove broad credential access or scope it to an explicit user-selected file with clear consent."
+    },
+    {
+      "severity": "high",
+      "category": "credential-access",
+      "title": "Sensitive host credential path is referenced",
+      "file": "src/lib/ssh/gateway-host.ts",
+      "line": 158,
+      "snippet": "sshArgs.push(\"-p\", String(params.sshPort));",
+      "blocking": false,
+      "recommendation": "Remove broad credential access or scope it to an explicit user-selected file with clear consent."
+    },
+    {
+      "severity": "high",
+      "category": "credential-access",
+      "title": "Sensitive host credential path is referenced",
+      "file": "src/lib/ssh/gateway-host.ts",
+      "line": 160,
+      "snippet": "sshArgs.push(params.sshTarget, ...params.argv);",
+      "blocking": false,
+      "recommendation": "Remove broad credential access or scope it to an explicit user-selected file with clear consent."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "src/lib/ssh/gateway-host.ts",
+      "line": 162,
+      "snippet": "const result = childProcess.spawnSync(\"ssh\", sshArgs, { ...options });",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "credential-access",
+      "title": "Sensitive host credential path is referenced",
+      "file": "src/lib/ssh/skills-remove.ts",
+      "line": 73,
+      "snippet": "sshTarget: params.sshTarget,",
+      "blocking": false,
+      "recommendation": "Remove broad credential access or scope it to an explicit user-selected file with clear consent."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "tests/unit/agentStateRoute.test.ts",
+      "line": 3,
+      "snippet": "import { spawnSync } from \"node:child_process\";",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "tests/unit/agentStateRoute.test.ts",
+      "line": 12,
+      "snippet": "vi.mock(\"node:child_process\", () => {",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "tests/unit/gatewayMediaRoute.test.ts",
+      "line": 5,
+      "snippet": "import { spawnSync } from \"node:child_process\";",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "tests/unit/gatewayMediaRoute.test.ts",
+      "line": 12,
+      "snippet": "vi.mock(\"node:child_process\", async () => {",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "tests/unit/gatewayMediaRoute.test.ts",
+      "line": 13,
+      "snippet": "const actual = await vi.importActual<typeof import(\"node:child_process\")>(",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "tests/unit/gatewayMediaRoute.test.ts",
+      "line": 14,
+      "snippet": "\"node:child_process\"",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "tests/unit/runSshJson.test.ts",
+      "line": 5,
+      "snippet": "import { spawnSync } from \"node:child_process\";",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "tests/unit/runSshJson.test.ts",
+      "line": 7,
+      "snippet": "vi.mock(\"node:child_process\", async () => {",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "tests/unit/runSshJson.test.ts",
+      "line": 8,
+      "snippet": "const actual = await vi.importActual<typeof import(\"node:child_process\")>(",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "tests/unit/runSshJson.test.ts",
+      "line": 9,
+      "snippet": "\"node:child_process\"",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "tests/unit/skillsRemoveRoute.test.ts",
+      "line": 3,
+      "snippet": "import { spawnSync } from \"node:child_process\";",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "high",
+      "category": "command-execution",
+      "title": "Host command-execution boundary",
+      "file": "tests/unit/skillsRemoveRoute.test.ts",
+      "line": 12,
+      "snippet": "vi.mock(\"node:child_process\", () => {",
+      "blocking": false,
+      "recommendation": "Confirm arguments are structured, shell mode is disabled, and user input cannot reach command text."
+    },
+    {
+      "severity": "medium",
+      "category": "supply-chain",
+      "title": "GitHub Action is pinned to a movable tag instead of a commit SHA",
+      "file": ".github/workflows/dependency-refresh.yml",
+      "line": 31,
+      "snippet": "        uses: actions/checkout@v5",
+      "blocking": false,
+      "recommendation": "Pin third-party actions to a reviewed full commit SHA and record the human-readable release in a comment."
+    },
+    {
+      "severity": "medium",
+      "category": "supply-chain",
+      "title": "GitHub Action is pinned to a movable tag instead of a commit SHA",
+      "file": ".github/workflows/dependency-refresh.yml",
+      "line": 37,
+      "snippet": "        uses: actions/setup-node@v5",
+      "blocking": false,
+      "recommendation": "Pin third-party actions to a reviewed full commit SHA and record the human-readable release in a comment."
+    },
+    {
+      "severity": "medium",
+      "category": "supply-chain",
+      "title": "GitHub Action is pinned to a movable tag instead of a commit SHA",
+      "file": ".github/workflows/dependency-refresh.yml",
+      "line": 159,
+      "snippet": "        uses: actions/upload-artifact@v7",
+      "blocking": false,
+      "recommendation": "Pin third-party actions to a reviewed full commit SHA and record the human-readable release in a comment."
+    },
+    {
+      "severity": "medium",
+      "category": "supply-chain",
+      "title": "GitHub Action is pinned to a movable tag instead of a commit SHA",
+      "file": ".github/workflows/docker-publish.yml",
+      "line": 26,
+      "snippet": "        uses: actions/checkout@v4",
+      "blocking": false,
+      "recommendation": "Pin third-party actions to a reviewed full commit SHA and record the human-readable release in a comment."
+    },
+    {
+      "severity": "medium",
+      "category": "supply-chain",
+      "title": "GitHub Action is pinned to a movable tag instead of a commit SHA",
+      "file": ".github/workflows/docker-publish.yml",
+      "line": 29,
+      "snippet": "        uses: docker/setup-buildx-action@v3",
+      "blocking": false,
+      "recommendation": "Pin third-party actions to a reviewed full commit SHA and record the human-readable release in a comment."
+    },
+    {
+      "severity": "medium",
+      "category": "supply-chain",
+      "title": "GitHub Action is pinned to a movable tag instead of a commit SHA",
+      "file": ".github/workflows/docker-publish.yml",
+      "line": 32,
+      "snippet": "        uses: docker/login-action@v3",
+      "blocking": false,
+      "recommendation": "Pin third-party actions to a reviewed full commit SHA and record the human-readable release in a comment."
+    },
+    {
+      "severity": "medium",
+      "category": "supply-chain",
+      "title": "GitHub Action is pinned to a movable tag instead of a commit SHA",
+      "file": ".github/workflows/docker-publish.yml",
+      "line": 62,
+      "snippet": "        uses: docker/build-push-action@v6",
+      "blocking": false,
+      "recommendation": "Pin third-party actions to a reviewed full commit SHA and record the human-readable release in a comment."
+    },
+    {
+      "severity": "medium",
+      "category": "supply-chain",
+      "title": "GitHub Action is pinned to a movable tag instead of a commit SHA",
+      "file": ".github/workflows/export-audit-worktree.yml",
+      "line": 19,
+      "snippet": "        uses: actions/checkout@v5",
+      "blocking": false,
+      "recommendation": "Pin third-party actions to a reviewed full commit SHA and record the human-readable release in a comment."
+    },
+    {
+      "severity": "medium",
+      "category": "supply-chain",
+      "title": "GitHub Action is pinned to a movable tag instead of a commit SHA",
+      "file": ".github/workflows/export-audit-worktree.yml",
+      "line": 27,
+      "snippet": "        uses: actions/upload-artifact@v4",
+      "blocking": false,
+      "recommendation": "Pin third-party actions to a reviewed full commit SHA and record the human-readable release in a comment."
+    },
+    {
+      "severity": "medium",
+      "category": "container",
+      "title": "Container runtime does not declare a non-root USER",
+      "file": "Dockerfile",
+      "line": null,
+      "snippet": "",
+      "blocking": false,
+      "recommendation": "Create a dedicated unprivileged runtime user and copy only required artifacts with appropriate ownership."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "scripts/generate-dependency-report.mjs",
+      "line": 192,
+      "snippet": "fs.mkdirSync(root, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "scripts/generate-dependency-report.mjs",
+      "line": 193,
+      "snippet": "fs.writeFileSync(path.join(root, \"REPORT.md\"), report);",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "scripts/hermes3doctor.mjs",
+      "line": 128,
+      "snippet": "const socket = new WebSocket(url, { handshakeTimeout: timeoutMs });",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "scripts/hermes3doctor.mjs",
+      "line": 154,
+      "snippet": "const response = await fetch(url, { headers, signal: controller.signal });",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "scripts/lib/hermes3doctor-core.mjs",
+      "line": 268,
+      "snippet": "normalizedHost !== \"0.0.0.0\";",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "scripts/list-dependency-lifecycle-scripts.mjs",
+      "line": 110,
+      "snippet": "fs.mkdirSync(path.dirname(outputPath), { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "scripts/list-dependency-lifecycle-scripts.mjs",
+      "line": 111,
+      "snippet": "fs.writeFileSync(outputPath, `${JSON.stringify(records, null, 2)}\\n`);",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "scripts/smoke-dev-server.mjs",
+      "line": 56,
+      "snippet": "const res = await fetch(url, { redirect: \"manual\" });",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "scripts/static-security-audit.mjs",
+      "line": 221,
+      "snippet": "pattern: /(?:searchParams|get\\([\"']path[\"']\\)|params\\.(?:path|file|name)|formData\\.get\\([\"'](?:file|path|name)[\"']\\))/g,",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "scripts/static-security-audit.mjs",
+      "line": 498,
+      "snippet": "fs.mkdirSync(outputDir, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "scripts/static-security-audit.mjs",
+      "line": 499,
+      "snippet": "fs.writeFileSync(reportPath, report);",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "scripts/static-security-audit.mjs",
+      "line": 500,
+      "snippet": "fs.writeFileSync(jsonPath, `${JSON.stringify(output, null, 2)}\\n`);",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "scripts/studio-setup.js",
+      "line": 67,
+      "snippet": "fs.mkdirSync(settingsDir, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "scripts/studio-setup.js",
+      "line": 75,
+      "snippet": "fs.writeFileSync(settingsPath, JSON.stringify(next, null, 2), \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "server/gateway-proxy.js",
+      "line": 139,
+      "snippet": "url.hostname === \"127.0.0.1\" || url.hostname === \"::1\" || url.hostname === \"0.0.0.0\"",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "server/gateway-proxy.js",
+      "line": 341,
+      "snippet": "upstreamWs = new WebSocket(upstreamUrl, {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "server/hermes-agent/jsonrpc-client.js",
+      "line": 50,
+      "snippet": "parsed.searchParams.set(\"token\", token.trim());",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "server/hermes-agent/jsonrpc-client.js",
+      "line": 151,
+      "snippet": "const ws = new WebSocket(this.url, options);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "server/hermes-agent/office-speech.js",
+      "line": 50,
+      "snippet": "parsed.searchParams.set(\"channel\", channel || DEFAULT_CHANNEL);",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "server/hermes-agent/office-speech.js",
+      "line": 52,
+      "snippet": "parsed.searchParams.set(\"token\", token.trim());",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "server/hermes-agent/office-speech.js",
+      "line": 138,
+      "snippet": "const ws = new WebSocket(eventsUrl, wsOptions);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "server/hermes-gateway-adapter.js",
+      "line": 271,
+      "snippet": "fs.mkdirSync(path.dirname(HISTORY_FILE), { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "server/hermes-gateway-adapter.js",
+      "line": 272,
+      "snippet": "fs.writeFileSync(HISTORY_FILE, JSON.stringify(data, null, 2), \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "server/index.js",
+      "line": 55,
+      "snippet": "fs.mkdirSync(CERT_DIR, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "server/index.js",
+      "line": 56,
+      "snippet": "fs.writeFileSync(CERT_PATH, pems.cert);",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "server/index.js",
+      "line": 57,
+      "snippet": "fs.writeFileSync(KEY_PATH, pems.private);",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "server/index.js",
+      "line": 173,
+      "snippet": ": hostname === \"0.0.0.0\" || hostname === \"::\"",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "server/network-policy.js",
+      "line": 51,
+      "snippet": "if (normalized === \"0.0.0.0\" || normalized === \"::\") {",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/files/upload/route.ts",
+      "line": 88,
+      "snippet": "const file = formData.get(\"file\");",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/app/api/files/upload/route.ts",
+      "line": 116,
+      "snippet": "await fs.writeFile(targetPath, bytes);",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/gateway/media/route.ts",
+      "line": 185,
+      "snippet": "const { searchParams } = new URL(request.url);",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/gateway/media/route.ts",
+      "line": 186,
+      "snippet": "const rawPath = (searchParams.get(\"path\") ?? \"\").trim();",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/app/api/office/browser-preview/route.ts",
+      "line": 61,
+      "snippet": "const response = await fetch(`${baseUrl}${pathname}`, {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/office/browser-preview/route.ts",
+      "line": 126,
+      "snippet": "const { searchParams } = new URL(request.url);",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/office/browser-preview/route.ts",
+      "line": 127,
+      "snippet": "const rawUrl = (searchParams.get(\"url\") ?? \"\").trim();",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/office/browser-preview/route.ts",
+      "line": 142,
+      "snippet": "const waitMsRaw = Number(searchParams.get(\"waitMs\") ?? \"\");",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/office/github/route.ts",
+      "line": 34,
+      "snippet": "const { searchParams } = new URL(request.url);",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/office/github/route.ts",
+      "line": 35,
+      "snippet": "const repo = (searchParams.get(\"repo\") ?? \"\").trim();",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/office/github/route.ts",
+      "line": 36,
+      "snippet": "const number = parsePullRequestNumber(searchParams.get(\"number\"));",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/app/api/office/layout/route.ts",
+      "line": 32,
+      "snippet": "response = await fetch(params.layoutUrl, {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/office/layout/route.ts",
+      "line": 59,
+      "snippet": "const source = url.searchParams.get(\"source\")?.trim() || \"local\";",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/office/layout/route.ts",
+      "line": 86,
+      "snippet": "const gatewayUrl = url.searchParams.get(\"gatewayUrl\")?.trim() || \"\";",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/office/presence/route.ts",
+      "line": 21,
+      "snippet": "const source = url.searchParams.get(\"source\")?.trim() || \"local\";",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/office/presence/route.ts",
+      "line": 22,
+      "snippet": "const workspaceId = url.searchParams.get(\"workspaceId\")?.trim() || \"default\";",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/office/route.ts",
+      "line": 20,
+      "snippet": "const workspaceId = asString(url.searchParams.get(\"workspaceId\")) || \"default\";",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/office/route.ts",
+      "line": 21,
+      "snippet": "const officeId = asString(url.searchParams.get(\"officeId\"));",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/office/standup/config/route.ts",
+      "line": 18,
+      "snippet": "return (url.searchParams.get(\"gatewayUrl\") ?? \"\").trim();",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/path-suggestions/route.ts",
+      "line": 136,
+      "snippet": "const { searchParams } = new URL(request.url);",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/api/path-suggestions/route.ts",
+      "line": 137,
+      "snippet": "const rawQuery = searchParams.get(\"q\");",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/app/api/runtime/custom/route.ts",
+      "line": 89,
+      "snippet": "const response = await fetch(`${runtimeUrl}${pathname}`, {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/spotify/callback/page.tsx",
+      "line": 8,
+      "snippet": "const code = url.searchParams.get(\"code\") ?? \"\";",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/spotify/callback/page.tsx",
+      "line": 9,
+      "snippet": "const state = url.searchParams.get(\"state\") ?? \"\";",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/app/spotify/callback/page.tsx",
+      "line": 10,
+      "snippet": "const error = url.searchParams.get(\"error\") ?? \"\";",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/agents/components/AgentChatPanel.tsx",
+      "line": 1506,
+      "snippet": "const response = await fetch(\"/api/files/upload\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/features/agents/screens/AgentsPageScreen.tsx",
+      "line": 153,
+      "snippet": "const searchParams = useSearchParams();",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/features/agents/screens/AgentsPageScreen.tsx",
+      "line": 157,
+      "snippet": "searchParams.get(SETTINGS_ROUTE_AGENT_ID_QUERY_PARAM)",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/features/agents/screens/AgentsPageScreen.tsx",
+      "line": 159,
+      "snippet": "[pathname, searchParams]",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/components/OfficeBuilderPanel.tsx",
+      "line": 29,
+      "snippet": "const response = await fetch(\"/api/office\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/components/OfficeBuilderPanel.tsx",
+      "line": 50,
+      "snippet": "const response = await fetch(\"/api/office/publish\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/features/office/hooks/useRemoteOfficeLayout.ts",
+      "line": 29,
+      "snippet": "const searchParams = new URLSearchParams({ source: \"remote\" });",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/features/office/hooks/useRemoteOfficeLayout.ts",
+      "line": 30,
+      "snippet": "return `/api/office/layout?${searchParams.toString()}`;",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/hooks/useRemoteOfficeLayout.ts",
+      "line": 39,
+      "snippet": "const response = await fetch(requestUrl, { cache: \"no-store\" });",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/features/office/hooks/useRemoteOfficePresence.ts",
+      "line": 70,
+      "snippet": "const searchParams = new URLSearchParams({",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/features/office/hooks/useRemoteOfficePresence.ts",
+      "line": 73,
+      "snippet": "return `/api/office/presence?${searchParams.toString()}`;",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/hooks/useRemoteOfficePresence.ts",
+      "line": 92,
+      "snippet": "const response = await fetch(requestUrl, { cache: \"no-store\" });",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/screens/github/useBrowserPreview.ts",
+      "line": 48,
+      "snippet": "const response = await fetch(",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/screens/GithubImmersiveScreen.tsx",
+      "line": 92,
+      "snippet": "const response = await fetch(\"/api/office/github\", { cache: \"no-store\" });",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/screens/GithubImmersiveScreen.tsx",
+      "line": 158,
+      "snippet": "const response = await fetch(",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/screens/GithubImmersiveScreen.tsx",
+      "line": 265,
+      "snippet": "const response = await fetch(\"/api/office/github\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/screens/GithubImmersiveScreen.tsx",
+      "line": 310,
+      "snippet": "const response = await fetch(\"/api/office/github\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/features/office/screens/OfficeScreen.tsx",
+      "line": 1084,
+      "snippet": "const searchParams = new URL(window.location.href).searchParams;",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/features/office/screens/OfficeScreen.tsx",
+      "line": 1085,
+      "snippet": "return searchParams.has(\"code\");",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/screens/OfficeScreen.tsx",
+      "line": 3073,
+      "snippet": "void fetch(\"/api/office/call\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/screens/OfficeScreen.tsx",
+      "line": 3104,
+      "snippet": "void fetch(\"/api/office/call\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/screens/OfficeScreen.tsx",
+      "line": 3233,
+      "snippet": "void fetch(\"/api/office/text\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/screens/OfficeScreen.tsx",
+      "line": 3264,
+      "snippet": "void fetch(\"/api/office/text\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/screens/OfficeScreen.tsx",
+      "line": 3431,
+      "snippet": "const response = await fetch(\"/api/office/remote-message\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/screens/OfficeScreen.tsx",
+      "line": 3539,
+      "snippet": "const response = await fetch(\"/api/office/remote-handoff\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/office/screens/OfficeScreen.tsx",
+      "line": 3812,
+      "snippet": "const response = await fetch(\"/api/office/voice/transcribe\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/retro-office/overlays/MonitorImmersiveContent.tsx",
+      "line": 60,
+      "snippet": "const response = await fetch(`/api/office/browser-preview?${params.toString()}`, {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/retro-office/RetroOffice3D.tsx",
+      "line": 3717,
+      "snippet": "void fetch(\"/api/office/layout\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/retro-office/RetroOffice3D.tsx",
+      "line": 3985,
+      "snippet": "const response = await fetch(\"/api/office/voice/reply\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/spotify-jukebox/auth.ts",
+      "line": 158,
+      "snippet": "const res = await fetch(\"https://accounts.spotify.com/api/token\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/spotify-jukebox/spotifyApi.ts",
+      "line": 59,
+      "snippet": "const res = await fetch(`${BASE}/me/player`, { headers: headers(token) });",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/spotify-jukebox/spotifyApi.ts",
+      "line": 77,
+      "snippet": "const res = await fetch(`${BASE}/search?${params}`, { headers: headers(token) });",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/spotify-jukebox/spotifyApi.ts",
+      "line": 89,
+      "snippet": "await fetch(`${BASE}/me/player/play${params}`, {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/spotify-jukebox/spotifyApi.ts",
+      "line": 97,
+      "snippet": "await fetch(`${BASE}/me/player/pause`, { method: \"PUT\", headers: headers(token) });",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/spotify-jukebox/spotifyApi.ts",
+      "line": 101,
+      "snippet": "await fetch(`${BASE}/me/player/play`, { method: \"PUT\", headers: headers(token) });",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/spotify-jukebox/spotifyApi.ts",
+      "line": 105,
+      "snippet": "await fetch(`${BASE}/me/player/next`, { method: \"POST\", headers: headers(token) });",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/spotify-jukebox/spotifyApi.ts",
+      "line": 109,
+      "snippet": "await fetch(`${BASE}/me/player/previous`, { method: \"POST\", headers: headers(token) });",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/features/spotify-jukebox/spotifyApi.ts",
+      "line": 114,
+      "snippet": "await fetch(`${BASE}/me/player/volume?${params}`, { method: \"PUT\", headers: headers(token) });",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/hooks/useVoiceReplyPlayback.ts",
+      "line": 178,
+      "snippet": "const response = await fetch(\"/api/office/voice/reply\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/agent-state/local.ts",
+      "line": 27,
+      "snippet": "fs.mkdirSync(path.dirname(dest), { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/agent-state/local.ts",
+      "line": 28,
+      "snippet": "fs.renameSync(src, dest);",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/agent-state/local.ts",
+      "line": 45,
+      "snippet": "fs.mkdirSync(path.join(trashDir, \"agents\"), { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/agent-state/local.ts",
+      "line": 46,
+      "snippet": "fs.mkdirSync(path.join(trashDir, \"workspaces\"), { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/agent-state/local.ts",
+      "line": 101,
+      "snippet": "fs.mkdirSync(path.dirname(dest), { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/agent-state/local.ts",
+      "line": 102,
+      "snippet": "fs.renameSync(src, dest);",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/gateway/agentConfig.ts",
+      "line": 354,
+      "snippet": "const trimmed = params.name.trim();",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/gateway/agentConfig.ts",
+      "line": 380,
+      "snippet": "const trimmed = params.name.trim();",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/gateway/agentFiles.ts",
+      "line": 25,
+      "snippet": "name: params.name,",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/gateway/agentFiles.ts",
+      "line": 48,
+      "snippet": "name: params.name,",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/gateway/agentFiles.ts",
+      "line": 59,
+      "snippet": "const entries = Object.entries(params.files).filter(",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/gateway/execApprovals.ts",
+      "line": 69,
+      "snippet": "const payload: Record<string, unknown> = { file: params.file };",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "src/lib/gateway/local-gateway.ts",
+      "line": 31,
+      "snippet": "normalized === \"0.0.0.0\"",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/lib/gateway/nodeGatewayClient.ts",
+      "line": 206,
+      "snippet": "const socket = new WebSocket(gatewayUrl);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/lib/gateway/protocol/GatewayBrowserClient.ts",
+      "line": 457,
+      "snippet": "this.ws = new WebSocket(this.opts.url);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/lib/http.ts",
+      "line": 5,
+      "snippet": "const res = await fetch(input, init);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "src/lib/office/browserPreview.ts",
+      "line": 15,
+      "snippet": "return normalized === \"0.0.0.0\" ? \"127.0.0.1\" : hostname;",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/office/github.ts",
+      "line": 619,
+      "snippet": "`path=${params.path}`,",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/office/layoutSnapshot.ts",
+      "line": 53,
+      "snippet": "parsed.searchParams.delete(\"source\");",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/office/layoutSnapshotStore.ts",
+      "line": 16,
+      "snippet": "fs.mkdirSync(dirPath, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/office/layoutSnapshotStore.ts",
+      "line": 55,
+      "snippet": "fs.writeFileSync(resolveStorePath(), JSON.stringify(store, null, 2), \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/lib/office/presence.ts",
+      "line": 117,
+      "snippet": "const response = await fetch(presenceUrl, {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/office/standup/service.ts",
+      "line": 128,
+      "snippet": "url.searchParams.set(\"maxResults\", \"50\");",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/office/standup/service.ts",
+      "line": 129,
+      "snippet": "url.searchParams.set(\"fields\", \"summary,status,assignee\");",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/office/standup/service.ts",
+      "line": 130,
+      "snippet": "url.searchParams.set(\"jql\", jql);",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/lib/office/standup/service.ts",
+      "line": 183,
+      "snippet": "const response = await fetch(searchUrl, {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/office/standup/store.ts",
+      "line": 14,
+      "snippet": "fs.mkdirSync(dirPath, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/office/standup/store.ts",
+      "line": 77,
+      "snippet": "fs.writeFileSync(storePath, JSON.stringify(store, null, 2), \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/office/store.ts",
+      "line": 48,
+      "snippet": "fs.mkdirSync(dirPath, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/office/store.ts",
+      "line": 126,
+      "snippet": "fs.writeFileSync(storePath, JSON.stringify(store, null, 2), \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/office/store.ts",
+      "line": 177,
+      "snippet": "existing.name = params.name;",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/office/store.ts",
+      "line": 185,
+      "snippet": "name: params.name,",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/lib/runtime/custom/http.ts",
+      "line": 36,
+      "snippet": "const response = await fetch(\"/api/runtime/custom\", {",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "src/lib/security/urlSafety.ts",
+      "line": 3,
+      "snippet": "const LOOPBACK_HOSTNAMES = new Set([\"localhost\", \"127.0.0.1\", \"::1\", \"0.0.0.0\"]);",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/skills/install-gateway.ts",
+      "line": 57,
+      "snippet": "const fileEntries = params.files",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/skills/remove-local.ts",
+      "line": 83,
+      "snippet": "fs.rmSync(baseDir, { recursive: true, force: false });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "src/lib/skills/types.ts",
+      "line": 196,
+      "snippet": "name: resolveRequiredValue(params.name, \"Skill name is required to install dependencies.\"),",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/studio/settings-store.ts",
+      "line": 201,
+      "snippet": "fs.mkdirSync(dir, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/studio/settings-store.ts",
+      "line": 203,
+      "snippet": "fs.writeFileSync(settingsPath, JSON.stringify(next, null, 2), \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "src/lib/studio/settings.ts",
+      "line": 295,
+      "snippet": "const LOOPBACK_HOSTNAMES = new Set([\"127.0.0.1\", \"::1\", \"0.0.0.0\"]);",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/lib/tasks/shared-store-client.ts",
+      "line": 34,
+      "snippet": "return fetch(input, { ...init, signal: controller.signal }).finally(() =>",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/tasks/shared-store.ts",
+      "line": 36,
+      "snippet": "fs.mkdirSync(dirPath, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/tasks/shared-store.ts",
+      "line": 166,
+      "snippet": "fs.writeFileSync(tmpPath, JSON.stringify(store, null, 2), \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/tasks/shared-store.ts",
+      "line": 167,
+      "snippet": "fs.renameSync(tmpPath, storePath);",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "src/lib/tasks/shared-store.ts",
+      "line": 170,
+      "snippet": "fs.unlinkSync(tmpPath);",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "src/lib/voiceReply/provider.ts",
+      "line": 39,
+      "snippet": "const response = await fetch(",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/agentStateLocal.test.ts",
+      "line": 26,
+      "snippet": "fs.mkdirSync(workspace, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/agentStateLocal.test.ts",
+      "line": 27,
+      "snippet": "fs.mkdirSync(agentDir, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/agentStateLocal.test.ts",
+      "line": 28,
+      "snippet": "fs.writeFileSync(path.join(workspace, \"hello.txt\"), \"hi\", \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/agentStateLocal.test.ts",
+      "line": 29,
+      "snippet": "fs.writeFileSync(path.join(agentDir, \"state.json\"), \"{}\", \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/agentStateLocal.test.ts",
+      "line": 49,
+      "snippet": "fs.mkdirSync(fakeTrashDir, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/agentStateRoute.test.ts",
+      "line": 26,
+      "snippet": "fs.mkdirSync(settingsDir, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/agentStateRoute.test.ts",
+      "line": 27,
+      "snippet": "fs.writeFileSync(",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "tests/unit/cronGatewayClient.test.ts",
+      "line": 22,
+      "snippet": "name: params.name,",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/gatewayEnvDefaults.test.ts",
+      "line": 68,
+      "snippet": "fs.writeFileSync(",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/gatewayEnvDefaults.test.ts",
+      "line": 140,
+      "snippet": "fs.writeFileSync(",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/gatewayEnvDefaults.test.ts",
+      "line": 173,
+      "snippet": "fs.writeFileSync(",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/gatewayMediaRoute.test.ts",
+      "line": 31,
+      "snippet": "fs.mkdirSync(settingsDir, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/gatewayMediaRoute.test.ts",
+      "line": 32,
+      "snippet": "fs.writeFileSync(",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/gatewayMediaRoute.test.ts",
+      "line": 65,
+      "snippet": "fs.rmSync(tempDir, { recursive: true, force: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/gatewayMediaRoute.test.ts",
+      "line": 133,
+      "snippet": "fs.mkdirSync(imagesDir, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/gatewayMediaRoute.test.ts",
+      "line": 134,
+      "snippet": "fs.mkdirSync(outsideDir, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/gatewayMediaRoute.test.ts",
+      "line": 137,
+      "snippet": "fs.writeFileSync(outsideFile, \"not-allowed\", \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/gatewayMediaRoute.test.ts",
+      "line": 154,
+      "snippet": "fs.rmSync(symlinkPath, { force: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "tests/unit/gatewayProxy.test.ts",
+      "line": 79,
+      "snippet": "const browser = new WebSocket(`ws://127.0.0.1:${proxyAddr.port}/api/gateway/ws`);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "tests/unit/gatewayProxy.test.ts",
+      "line": 139,
+      "snippet": "const browser = new WebSocket(`ws://127.0.0.1:${proxyAddr.port}/api/gateway/ws`);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "tests/unit/gatewayProxy.test.ts",
+      "line": 206,
+      "snippet": "const browser = new WebSocket(`ws://127.0.0.1:${proxyAddr.port}/api/gateway/ws`);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "tests/unit/gatewayProxy.test.ts",
+      "line": 293,
+      "snippet": "const browser = new WebSocket(`ws://127.0.0.1:${proxyAddr.port}/api/gateway/ws`);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "tests/unit/gatewayProxy.test.ts",
+      "line": 363,
+      "snippet": "const browser = new WebSocket(`ws://127.0.0.1:${proxyAddr.port}/api/gateway/ws`);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "tests/unit/gatewayProxy.test.ts",
+      "line": 443,
+      "snippet": "const browser = new WebSocket(`ws://127.0.0.1:${proxyAddr.port}/api/gateway/ws`);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "tests/unit/gatewayProxy.test.ts",
+      "line": 528,
+      "snippet": "const browser = new WebSocket(`ws://127.0.0.1:${proxyAddr.port}/api/gateway/ws`);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "tests/unit/gatewayProxy.test.ts",
+      "line": 601,
+      "snippet": "const browser = new WebSocket(`ws://127.0.0.1:${proxyAddr.port}/api/gateway/ws`);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "tests/unit/gatewayProxy.test.ts",
+      "line": 667,
+      "snippet": "const browser = new WebSocket(`ws://127.0.0.1:${proxyAddr.port}/api/gateway/ws`);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "tests/unit/gatewayProxy.test.ts",
+      "line": 727,
+      "snippet": "const browser = new WebSocket(`ws://127.0.0.1:${proxyAddr.port}/api/gateway/ws`);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "tests/unit/gatewayProxy.test.ts",
+      "line": 802,
+      "snippet": "const browser = new WebSocket(`ws://127.0.0.1:${proxyAddr.port}/api/gateway/ws`);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "network-egress",
+      "title": "Outbound network boundary",
+      "file": "tests/unit/gatewayProxy.test.ts",
+      "line": 882,
+      "snippet": "const browser = new WebSocket(`ws://127.0.0.1:${proxyAddr.port}/api/gateway/ws`);",
+      "blocking": false,
+      "recommendation": "Require an explicit allowlist, constrain protocols, redact credentials, and set timeouts/size limits."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "tests/unit/hermesAgentBridge.test.ts",
+      "line": 47,
+      "snippet": "received.push({ __connect: true, path: url.pathname, token: url.searchParams.get(\"token\") });",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "tests/unit/officeSpeechSubscriber.test.ts",
+      "line": 24,
+      "snippet": "expect(url.searchParams.get(\"channel\")).toBe(\"hermes3d\");",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "tests/unit/officeSpeechSubscriber.test.ts",
+      "line": 25,
+      "snippet": "expect(url.searchParams.get(\"token\")).toBe(\"secret\");",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "path-resolution",
+      "title": "User-controlled path or URL input requires containment review",
+      "file": "tests/unit/officeSpeechSubscriber.test.ts",
+      "line": 40,
+      "snippet": "expect(url.searchParams.has(\"token\")).toBe(false);",
+      "blocking": false,
+      "recommendation": "Normalize once, reject traversal/symlinks, and verify the real path remains under an approved root."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/pathSuggestionsRoute.test.ts",
+      "line": 13,
+      "snippet": "fs.mkdirSync(path.join(tempHome, \"Documents\"), { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/pathSuggestionsRoute.test.ts",
+      "line": 14,
+      "snippet": "fs.mkdirSync(path.join(tempHome, \"Downloads\"), { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/pathSuggestionsRoute.test.ts",
+      "line": 15,
+      "snippet": "fs.writeFileSync(path.join(tempHome, \"Doc.txt\"), \"doc\", \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/pathSuggestionsRoute.test.ts",
+      "line": 16,
+      "snippet": "fs.writeFileSync(path.join(tempHome, \"Notes.txt\"), \"notes\", \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/pathSuggestionsRoute.test.ts",
+      "line": 17,
+      "snippet": "fs.writeFileSync(path.join(tempHome, \".secret\"), \"hidden\", \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/pathSuggestionsRoute.test.ts",
+      "line": 25,
+      "snippet": "fs.rmSync(home, { recursive: true, force: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "tests/unit/serverNetworkPolicy.test.ts",
+      "line": 20,
+      "snippet": "resolveHosts({ HOST: \"0.0.0.0\", HOSTNAME: \"example-host\" } as unknown as NodeJS.ProcessEnv)",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "tests/unit/serverNetworkPolicy.test.ts",
+      "line": 21,
+      "snippet": ").toEqual([\"0.0.0.0\"]);",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "tests/unit/serverNetworkPolicy.test.ts",
+      "line": 23,
+      "snippet": "resolveHost({ HOST: \"0.0.0.0\", HOSTNAME: \"example-host\" } as unknown as NodeJS.ProcessEnv)",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "tests/unit/serverNetworkPolicy.test.ts",
+      "line": 24,
+      "snippet": ").toBe(\"0.0.0.0\");",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "tests/unit/serverNetworkPolicy.test.ts",
+      "line": 29,
+      "snippet": "expect(isPublicHost(\"0.0.0.0\")).toBe(true);",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "tests/unit/serverNetworkPolicy.test.ts",
+      "line": 30,
+      "snippet": "expect(isPublicHost(\"::\")).toBe(true);",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "tests/unit/serverNetworkPolicy.test.ts",
+      "line": 51,
+      "snippet": "expect(() => assertPublicHostAllowed({ host: \"0.0.0.0\", studioAccessToken: \"\" })).toThrow(",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "tests/unit/serverNetworkPolicy.test.ts",
+      "line": 54,
+      "snippet": "expect(() => assertPublicHostAllowed({ host: \"0.0.0.0\", studioAccessToken: \"   \" })).toThrow(",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "public-bind",
+      "title": "Public network bind literal",
+      "file": "tests/unit/serverNetworkPolicy.test.ts",
+      "line": 58,
+      "snippet": "assertPublicHostAllowed({ host: \"0.0.0.0\", studioAccessToken: \"abc\" })",
+      "blocking": false,
+      "recommendation": "Default to loopback and require authentication before allowing a public bind."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/sharedTaskStore.test.ts",
+      "line": 23,
+      "snippet": "fs.rmSync(tempDir, { recursive: true, force: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/sharedTaskStore.test.ts",
+      "line": 83,
+      "snippet": "fs.writeFileSync(storePath, \"{invalid json!!!\", \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/skillsRemoveLocal.test.ts",
+      "line": 26,
+      "snippet": "fs.mkdirSync(skillDir, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/skillsRemoveLocal.test.ts",
+      "line": 27,
+      "snippet": "fs.writeFileSync(path.join(skillDir, \"SKILL.md\"), \"# skill\", \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/skillsRemoveLocal.test.ts",
+      "line": 65,
+      "snippet": "fs.mkdirSync(workspaceSkillsRoot, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/skillsRemoveLocal.test.ts",
+      "line": 82,
+      "snippet": "fs.mkdirSync(nonSkillDir, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/skillsRemoveRoute.test.ts",
+      "line": 25,
+      "snippet": "fs.mkdirSync(settingsDir, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/skillsRemoveRoute.test.ts",
+      "line": 26,
+      "snippet": "fs.writeFileSync(",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/skillsRemoveRoute.test.ts",
+      "line": 115,
+      "snippet": "fs.mkdirSync(skillDir, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/skillsRemoveRoute.test.ts",
+      "line": 116,
+      "snippet": "fs.writeFileSync(path.join(skillDir, \"SKILL.md\"), \"# skill\", \"utf8\");",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/standupStore.test.ts",
+      "line": 14,
+      "snippet": "fs.mkdirSync(storeDir, { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/standupStore.test.ts",
+      "line": 15,
+      "snippet": "fs.writeFileSync(",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/standupStore.test.ts",
+      "line": 29,
+      "snippet": "fs.rmSync(tempDir, { recursive: true, force: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/studioSettingsRoute.test.ts",
+      "line": 18,
+      "snippet": "fs.rmSync(tempDir, { recursive: true, force: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/studioSettingsRoute.test.ts",
+      "line": 42,
+      "snippet": "fs.writeFileSync(",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/studioUpstreamGatewaySettings.test.ts",
+      "line": 16,
+      "snippet": "fs.rmSync(tempDir, { recursive: true, force: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/studioUpstreamGatewaySettings.test.ts",
+      "line": 25,
+      "snippet": "fs.writeFileSync(",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/studioUpstreamGatewaySettings.test.ts",
+      "line": 41,
+      "snippet": "fs.mkdirSync(path.join(tempDir, \"hermes3d\"), { recursive: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/studioUpstreamGatewaySettings.test.ts",
+      "line": 42,
+      "snippet": "fs.writeFileSync(",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/studioUpstreamGatewaySettings.test.ts",
+      "line": 47,
+      "snippet": "fs.writeFileSync(",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "medium",
+      "category": "filesystem-write",
+      "title": "Filesystem mutation boundary",
+      "file": "tests/unit/taskStoreRoute.test.ts",
+      "line": 25,
+      "snippet": "fs.rmSync(tempDir, { recursive: true, force: true });",
+      "blocking": false,
+      "recommendation": "Verify canonical-path containment, symlink handling, size limits, and authorization before mutation."
+    },
+    {
+      "severity": "info",
+      "category": "executable",
+      "title": "Tracked executable file",
+      "file": "plugins/hermes3d-office-bridge/install.sh",
+      "line": null,
+      "snippet": "",
+      "blocking": false,
+      "recommendation": "Confirm the executable is expected and never runs automatically during install or startup."
+    },
+    {
+      "severity": "info",
+      "category": "executable",
+      "title": "Tracked executable file",
+      "file": "scripts/hermes3d-start.sh",
+      "line": null,
+      "snippet": "",
+      "blocking": false,
+      "recommendation": "Confirm the executable is expected and never runs automatically during install or startup."
+    }
+  ],
+  "apiRoutes": [
+    {
+      "file": "src/app/api/files/[file]/route.ts",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "file": "src/app/api/files/upload/route.ts",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "file": "src/app/api/gateway/agent-state/route.ts",
+      "methods": [
+        "POST",
+        "PUT"
+      ]
+    },
+    {
+      "file": "src/app/api/gateway/media/route.ts",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "file": "src/app/api/gateway/skills/remove/route.ts",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "file": "src/app/api/health/route.ts",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "file": "src/app/api/office/browser-preview/route.ts",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "file": "src/app/api/office/call/route.ts",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "file": "src/app/api/office/github/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ]
+    },
+    {
+      "file": "src/app/api/office/layout/route.ts",
+      "methods": [
+        "GET",
+        "PUT"
+      ]
+    },
+    {
+      "file": "src/app/api/office/presence/route.ts",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "file": "src/app/api/office/publish/route.ts",
+      "methods": [
+        "PUT"
+      ]
+    },
+    {
+      "file": "src/app/api/office/remote-handoff/route.ts",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "file": "src/app/api/office/remote-message/route.ts",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "file": "src/app/api/office/route.ts",
+      "methods": [
+        "GET",
+        "PUT"
+      ]
+    },
+    {
+      "file": "src/app/api/office/standup/config/route.ts",
+      "methods": [
+        "GET",
+        "PUT"
+      ]
+    },
+    {
+      "file": "src/app/api/office/standup/meeting/route.ts",
+      "methods": [
+        "GET",
+        "PUT"
+      ]
+    },
+    {
+      "file": "src/app/api/office/standup/run/route.ts",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "file": "src/app/api/office/text/route.ts",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "file": "src/app/api/office/voice/reply/route.ts",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "file": "src/app/api/office/voice/transcribe/route.ts",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "file": "src/app/api/path-suggestions/route.ts",
+      "methods": [
+        "GET"
+      ]
+    },
+    {
+      "file": "src/app/api/runtime/custom/route.ts",
+      "methods": [
+        "POST"
+      ]
+    },
+    {
+      "file": "src/app/api/studio/route.ts",
+      "methods": [
+        "GET",
+        "PUT"
+      ]
+    },
+    {
+      "file": "src/app/api/task-store/route.ts",
+      "methods": [
+        "DELETE",
+        "GET",
+        "PUT"
+      ]
+    }
+  ],
+  "environmentVariables": [
+    "CI",
+    "CODEX_HOME",
+    "CUSTOM_RUNTIME_ALLOWLIST",
+    "DEBUG",
+    "DEMO_ADAPTER_PORT",
+    "ELEVENLABS_API_KEY",
+    "ELEVENLABS_MODEL_ID",
+    "ELEVENLABS_VOICE_ID",
+    "HERMES3D_E2E_GATEWAY",
+    "HERMES3D_GATEWAY_ADAPTER_TYPE",
+    "HERMES3D_GATEWAY_TOKEN",
+    "HERMES3D_GATEWAY_URL",
+    "HERMES_ADAPTER_PORT",
+    "HERMES_AGENT_NAME",
+    "HERMES_API_KEY",
+    "HERMES_API_URL",
+    "HERMES_GATEWAY_SSH_TARGET",
+    "HERMES_GATEWAY_SSH_USER",
+    "HERMES_MODEL",
+    "HERMES_STATE_DIR",
+    "HOME",
+    "HTTPS",
+    "NEXT_PUBLIC_GATEWAY_URL",
+    "NEXT_PUBLIC_STUDIO_TRANSCRIPT_DEBUG",
+    "NEXT_PUBLIC_STUDIO_TRANSCRIPT_V2",
+    "NODE_ENV",
+    "NO_COLOR",
+    "PORT",
+    "STUDIO_ACCESS_TOKEN",
+    "TRUSTED_PROXY",
+    "UPSTREAM_ALLOWLIST"
+  ],
+  "packageScripts": [
+    {
+      "name": "dev",
+      "command": "node server/index.js --dev"
+    },
+    {
+      "name": "dev:https",
+      "command": "node server/index.js --dev --https"
+    },
+    {
+      "name": "hermes-adapter",
+      "command": "node server/hermes-gateway-adapter.js"
+    },
+    {
+      "name": "demo-gateway",
+      "command": "node server/demo-gateway-adapter.js"
+    },
+    {
+      "name": "build",
+      "command": "next build"
+    },
+    {
+      "name": "start",
+      "command": "node server/index.js"
+    },
+    {
+      "name": "lint",
+      "command": "eslint ."
+    },
+    {
+      "name": "cleanup:ux-artifacts",
+      "command": "node scripts/cleanup-ux-artifacts.mjs"
+    },
+    {
+      "name": "studio:setup",
+      "command": "node scripts/studio-setup.js"
+    },
+    {
+      "name": "doctor",
+      "command": "node scripts/hermes3doctor.mjs"
+    },
+    {
+      "name": "smoke:dev-server",
+      "command": "node scripts/smoke-dev-server.mjs"
+    },
+    {
+      "name": "typecheck",
+      "command": "tsc --noEmit"
+    },
+    {
+      "name": "test",
+      "command": "vitest"
+    },
+    {
+      "name": "e2e",
+      "command": "playwright test"
+    }
+  ],
+  "workflowActions": [
+    {
+      "file": ".github/workflows/dependency-refresh.yml",
+      "line": 31,
+      "action": "actions/checkout@v5",
+      "pinned": false
+    },
+    {
+      "file": ".github/workflows/dependency-refresh.yml",
+      "line": 37,
+      "action": "actions/setup-node@v5",
+      "pinned": false
+    },
+    {
+      "file": ".github/workflows/dependency-refresh.yml",
+      "line": 159,
+      "action": "actions/upload-artifact@v7",
+      "pinned": false
+    },
+    {
+      "file": ".github/workflows/docker-publish.yml",
+      "line": 26,
+      "action": "actions/checkout@v4",
+      "pinned": false
+    },
+    {
+      "file": ".github/workflows/docker-publish.yml",
+      "line": 29,
+      "action": "docker/setup-buildx-action@v3",
+      "pinned": false
+    },
+    {
+      "file": ".github/workflows/docker-publish.yml",
+      "line": 32,
+      "action": "docker/login-action@v3",
+      "pinned": false
+    },
+    {
+      "file": ".github/workflows/docker-publish.yml",
+      "line": 62,
+      "action": "docker/build-push-action@v6",
+      "pinned": false
+    },
+    {
+      "file": ".github/workflows/export-audit-worktree.yml",
+      "line": 19,
+      "action": "actions/checkout@v5",
+      "pinned": false
+    },
+    {
+      "file": ".github/workflows/export-audit-worktree.yml",
+      "line": 27,
+      "action": "actions/upload-artifact@v4",
+      "pinned": false
+    },
+    {
+      "file": ".github/workflows/static-security-audit.yml",
+      "line": 24,
+      "action": "actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09",
+      "pinned": true
+    },
+    {
+      "file": ".github/workflows/static-security-audit.yml",
+      "line": 30,
+      "action": "actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444",
+      "pinned": true
+    },
+    {
+      "file": ".github/workflows/static-security-audit.yml",
+      "line": 39,
+      "action": "actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a",
+      "pinned": true
+    }
+  ]
+}
