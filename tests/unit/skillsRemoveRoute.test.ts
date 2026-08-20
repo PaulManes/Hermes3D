@@ -59,7 +59,7 @@ describe("skills remove route", () => {
     expect(response.status).toBe(400);
   });
 
-  it("removes skills via ssh for remote gateways", async () => {
+  it("removes skills via one quoted SSH command for remote gateways", async () => {
     writeStudioSettings("ws://example.test:18789");
 
     mockedSpawnSync.mockReturnValueOnce({
@@ -73,37 +73,37 @@ describe("skills remove route", () => {
       error: undefined,
     } as never);
 
+    const request = {
+      skillKey: "github",
+      source: "hermes-managed",
+      baseDir: "/home/ubuntu/.hermes/skills/github",
+      workspaceDir: "/home/ubuntu/.hermes/workspace-main",
+      managedSkillsDir: "/home/ubuntu/.hermes/skills",
+    };
     const response = await POST(
       new Request("http://localhost/api/gateway/skills/remove", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({
-          skillKey: "github",
-          source: "hermes-managed",
-          baseDir: "/home/ubuntu/.hermes/skills/github",
-          workspaceDir: "/home/ubuntu/.hermes/workspace-main",
-          managedSkillsDir: "/home/ubuntu/.hermes/skills",
-        }),
+        body: JSON.stringify(request),
       })
     );
 
     expect(response.status).toBe(200);
     expect(mockedSpawnSync).toHaveBeenCalledTimes(1);
 
-    const [cmd, args] = mockedSpawnSync.mock.calls[0] as [string, string[]];
+    const [cmd, args, options] = mockedSpawnSync.mock.calls[0] as [
+      string,
+      string[],
+      { timeout?: number },
+    ];
     expect(cmd).toBe("ssh");
-    expect(args).toEqual(
-      expect.arrayContaining([
-        "-o",
-        "BatchMode=yes",
-        "ubuntu@example.test",
-        "bash",
-        "-s",
-        "--",
-        "github",
-        "hermes-managed",
-      ])
+    expect(args).toEqual(expect.arrayContaining(["-o", "BatchMode=yes"]));
+    expect(args.at(-2)).toBe("ubuntu@example.test");
+    expect(args.at(-1)).toBe(
+      `'bash' '-s' '--' 'github' 'hermes-managed' '/home/ubuntu/.hermes/skills/github' '/home/ubuntu/.hermes/workspace-main' '/home/ubuntu/.hermes/skills'`,
     );
+    expect(args).not.toContain(request.baseDir);
+    expect(options.timeout).toBe(30_000);
   });
 
   it("removes local workspace skills without ssh", async () => {
