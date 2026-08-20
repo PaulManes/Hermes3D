@@ -67,7 +67,7 @@ describe("/api/gateway/media route", () => {
     }
   });
 
-  it("returns binary image data when reading remote media over ssh", async () => {
+  it("returns bounded binary image data when reading remote media over ssh", async () => {
     tempDir = makeTempDir("gateway-media-route-remote");
     process.env.HERMES_STATE_DIR = tempDir;
     process.env.HERMES_GATEWAY_SSH_TARGET = "me@host.test";
@@ -96,6 +96,7 @@ describe("/api/gateway/media route", () => {
     expect(response.status).toBe(200);
     expect(response.headers.get("Content-Type")).toBe("image/png");
     expect(response.headers.get("Content-Length")).toBe(String(payloadBytes.length));
+    expect(response.headers.get("X-Content-Type-Options")).toBe("nosniff");
 
     const buf = Buffer.from(await response.arrayBuffer());
     expect(buf.equals(payloadBytes)).toBe(true);
@@ -104,24 +105,47 @@ describe("/api/gateway/media route", () => {
     const [cmd, args, options] = mockedSpawnSync.mock.calls[0] as [
       string,
       string[],
-      { encoding?: string; input?: string; maxBuffer?: number },
+      { encoding?: string; input?: string; maxBuffer?: number; timeout?: number },
     ];
     expect(cmd).toBe("ssh");
-    expect(args).toEqual(
-      expect.arrayContaining([
-        "-o",
-        "BatchMode=yes",
-        "me@host.test",
-        "bash",
-        "-s",
-        "--",
-        remotePath,
-      ])
-    );
+    expect(args).toEqual(expect.arrayContaining(["-o", "BatchMode=yes"]));
+    expect(args.at(-2)).toBe("me@host.test");
+    expect(args.at(-1)).toBe(`'bash' '-s' '--' '${remotePath}'`);
+    expect(args).not.toContain(remotePath);
     expect(options.encoding).toBe("utf8");
     expect(options.input).toContain("python3 - \"$1\"");
     expect(typeof options.maxBuffer).toBe("number");
     expect(options.maxBuffer).toBeGreaterThan(payloadBytes.length);
+    expect(options.timeout).toBe(30_000);
+  });
+
+  it("rejects a remote response whose declared size does not match decoded bytes", async () => {
+    tempDir = makeTempDir("gateway-media-route-remote-size");
+    process.env.HERMES_STATE_DIR = tempDir;
+    process.env.HERMES_GATEWAY_SSH_TARGET = "me@host.test";
+    writeStudioSettings(tempDir, "ws://example.test:18789");
+
+    mockedSpawnSync.mockReturnValueOnce({
+      status: 0,
+      stdout: JSON.stringify({
+        ok: true,
+        mime: "image/png",
+        size: 999,
+        data: Buffer.from("fake", "utf8").toString("base64"),
+      }),
+      stderr: "",
+      error: undefined,
+    } as never);
+
+    const response = await GET(
+      new Request(
+        "http://localhost/api/gateway/media?path=%2Fhome%2Fubuntu%2F.hermes%2Fimages%2Fpic.png",
+      ),
+    );
+    const body = (await response.json()) as { error?: string };
+
+    expect(response.status).toBe(400);
+    expect(body.error).toMatch(/mismatched payload size/i);
   });
 
   it("rejects symlinked local media paths", async () => {
@@ -154,4 +178,3 @@ describe("/api/gateway/media route", () => {
     fs.rmSync(symlinkPath, { force: true });
   });
 });
-
