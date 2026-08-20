@@ -1,4 +1,5 @@
 import crypto from "node:crypto";
+import { constants as fsConstants } from "node:fs";
 import fs from "node:fs/promises";
 import path from "node:path";
 
@@ -9,6 +10,8 @@ import { resolveStateDir } from "@/lib/hermes/paths";
 export const runtime = "nodejs";
 
 const MAX_UPLOAD_BYTES = 10 * 1024 * 1024;
+const MAX_MULTIPART_OVERHEAD_BYTES = 512 * 1024;
+const MAX_STORED_NAME_BYTES = 180;
 const CONTENT_TYPE_BY_EXT: Record<string, string> = {
   ".png": "image/png",
   ".jpg": "image/jpeg",
@@ -39,51 +42,129 @@ const CONTENT_TYPE_BY_EXT: Record<string, string> = {
   ".yml": "text/plain",
   ".log": "text/plain",
 };
-const ALLOWED_CONTENT_TYPES = new Set([
-  "image/png",
-  "image/jpeg",
-  "image/gif",
-  "image/webp",
+const GENERIC_UPLOAD_CONTENT_TYPES = new Set(["", "application/octet-stream"]);
+const TEXT_CONTENT_TYPES = new Set([
   "text/plain",
   "text/markdown",
   "text/csv",
   "application/json",
   "application/xml",
-  "text/xml",
-  "application/pdf",
 ]);
-const ALLOWED_EXTENSIONS = new Set(Object.keys(CONTENT_TYPE_BY_EXT));
-
-const TEXT_CONTENT_TYPES = [
-  "text/",
-  "application/json",
-  "application/xml",
-];
-
-const sanitizeFilename = (input: string): string => {
-  const cleaned = input.replace(/[^a-zA-Z0-9._-]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
-  return cleaned || "upload";
-};
 
 const uploadsDir = () => path.join(resolveStateDir(), "hermes3d", "uploads");
 
-const isTextContentType = (contentType: string): boolean =>
-  TEXT_CONTENT_TYPES.some((prefix) => contentType.startsWith(prefix));
+const isWithin = (candidate: string, root: string): boolean => {
+  const relative = path.relative(root, candidate);
+  return relative === "" || (!relative.startsWith("..") && !path.isAbsolute(relative));
+};
 
-const resolveUploadContentType = (file: File): string | null => {
-  const explicit = file.type.trim().toLowerCase();
-  if (explicit && (ALLOWED_CONTENT_TYPES.has(explicit) || explicit.startsWith("text/"))) {
-    return explicit;
+const prepareUploadsDir = async (): Promise<string> => {
+  const stateDir = resolveStateDir();
+  const targetDir = uploadsDir();
+  await fs.mkdir(stateDir, { recursive: true, mode: 0o700 });
+  await fs.mkdir(targetDir, { recursive: true, mode: 0o700 });
+
+  const targetEntry = await fs.lstat(targetDir);
+  if (!targetEntry.isDirectory() || targetEntry.isSymbolicLink()) {
+    throw new Error("Upload directory is not a safe local directory.");
   }
-  const ext = path.extname(file.name || "").trim().toLowerCase();
-  if (!ext || !ALLOWED_EXTENSIONS.has(ext)) {
-    return null;
+
+  const [realStateDir, realTargetDir] = await Promise.all([
+    fs.realpath(stateDir),
+    fs.realpath(targetDir),
+  ]);
+  if (!isWithin(realTargetDir, realStateDir)) {
+    throw new Error("Upload directory escapes the configured state directory.");
   }
-  return CONTENT_TYPE_BY_EXT[ext] ?? null;
+  return realTargetDir;
+};
+
+const sanitizeStem = (input: string): string => {
+  const cleaned = input
+    .normalize("NFKC")
+    .replace(/[^a-zA-Z0-9_-]+/g, "-")
+    .replace(/-+/g, "-")
+    .replace(/^-|-$/g, "")
+    .slice(0, 96);
+  return cleaned || "upload";
+};
+
+const matchesMagic = (bytes: Buffer, extension: string): boolean => {
+  switch (extension) {
+    case ".png":
+      return bytes.subarray(0, 8).equals(Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]));
+    case ".jpg":
+    case ".jpeg":
+      return bytes.length >= 3 && bytes[0] === 0xff && bytes[1] === 0xd8 && bytes[2] === 0xff;
+    case ".gif": {
+      const header = bytes.subarray(0, 6).toString("ascii");
+      return header === "GIF87a" || header === "GIF89a";
+    }
+    case ".webp":
+      return (
+        bytes.length >= 12 &&
+        bytes.subarray(0, 4).toString("ascii") === "RIFF" &&
+        bytes.subarray(8, 12).toString("ascii") === "WEBP"
+      );
+    case ".pdf":
+      return bytes.subarray(0, 5).toString("ascii") === "%PDF-";
+    default:
+      return true;
+  }
+};
+
+const decodeText = (bytes: Buffer): string => {
+  if (bytes.includes(0)) {
+    throw new Error("Text uploads may not contain NUL bytes.");
+  }
+  try {
+    return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
+  } catch {
+    throw new Error("Text upload is not valid UTF-8.");
+  }
+};
+
+const validateText = (contentType: string, bytes: Buffer): string => {
+  const text = decodeText(bytes);
+  if (contentType === "application/json") {
+    try {
+      JSON.parse(text);
+    } catch {
+      throw new Error("JSON upload is not valid JSON.");
+    }
+  }
+  return text;
+};
+
+const writePrivateFile = async (targetPath: string, bytes: Buffer): Promise<void> => {
+  const flags =
+    fsConstants.O_WRONLY |
+    fsConstants.O_CREAT |
+    fsConstants.O_EXCL |
+    (fsConstants.O_NOFOLLOW ?? 0);
+  const handle = await fs.open(targetPath, flags, 0o600);
+  try {
+    await handle.writeFile(bytes);
+    await handle.sync();
+  } finally {
+    await handle.close();
+  }
 };
 
 export async function POST(request: Request) {
   try {
+    const rawLength = request.headers.get("content-length")?.trim() ?? "";
+    if (rawLength) {
+      const contentLength = Number(rawLength);
+      if (
+        !Number.isSafeInteger(contentLength) ||
+        contentLength < 0 ||
+        contentLength > MAX_UPLOAD_BYTES + MAX_MULTIPART_OVERHEAD_BYTES
+      ) {
+        return NextResponse.json({ error: "Upload request is too large." }, { status: 413 });
+      }
+    }
+
     const formData = await request.formData();
     const file = formData.get("file");
     if (!(file instanceof File)) {
@@ -93,48 +174,79 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: "Uploaded file is empty." }, { status: 400 });
     }
     if (file.size > MAX_UPLOAD_BYTES) {
-      return NextResponse.json({ error: "File exceeds 10 MB limit." }, { status: 400 });
+      return NextResponse.json({ error: "File exceeds 10 MB limit." }, { status: 413 });
     }
 
-    const contentType = resolveUploadContentType(file);
+    const originalName = path.basename(file.name || "upload");
+    const extension = path.extname(originalName).toLowerCase();
+    const contentType = CONTENT_TYPE_BY_EXT[extension];
     if (!contentType) {
-      const ext = path.extname(file.name || "").trim().toLowerCase();
       return NextResponse.json(
-        { error: `Unsupported file type: ${ext || file.type.trim().toLowerCase() || "(unknown)"}` },
-        { status: 400 }
+        { error: `Unsupported file extension: ${extension || "(none)"}` },
+        { status: 400 },
       );
     }
 
-    const fileId = crypto.randomBytes(8).toString("hex");
-    const safeName = sanitizeFilename(file.name || "upload");
-    const storedName = `${fileId}-${safeName}`;
-    const targetDir = uploadsDir();
-    const targetPath = path.join(targetDir, storedName);
+    const declaredContentType = file.type.trim().toLowerCase();
+    if (
+      !GENERIC_UPLOAD_CONTENT_TYPES.has(declaredContentType) &&
+      declaredContentType !== contentType
+    ) {
+      return NextResponse.json(
+        { error: "Declared file type does not match the file extension." },
+        { status: 400 },
+      );
+    }
 
-    await fs.mkdir(targetDir, { recursive: true });
     const bytes = Buffer.from(await file.arrayBuffer());
-    await fs.writeFile(targetPath, bytes);
+    if (bytes.length !== file.size || bytes.length > MAX_UPLOAD_BYTES) {
+      return NextResponse.json({ error: "Uploaded file size is invalid." }, { status: 400 });
+    }
+    if (!matchesMagic(bytes, extension)) {
+      return NextResponse.json(
+        { error: "File contents do not match the file extension." },
+        { status: 400 },
+      );
+    }
+
+    let normalizedText: string | undefined;
+    if (TEXT_CONTENT_TYPES.has(contentType)) {
+      normalizedText = validateText(contentType, bytes).trim();
+    }
+
+    const originalStem = path.basename(originalName, extension);
+    const safeStem = sanitizeStem(originalStem);
+    const fileId = crypto.randomBytes(16).toString("hex");
+    const storedName = `${fileId}-${safeStem}${extension}`;
+    if (Buffer.byteLength(storedName, "utf8") > MAX_STORED_NAME_BYTES) {
+      throw new Error("Stored upload name is too long.");
+    }
+
+    const targetDir = await prepareUploadsDir();
+    const targetPath = path.join(targetDir, storedName);
+    if (!isWithin(targetPath, targetDir)) {
+      throw new Error("Upload path escaped the upload directory.");
+    }
+    await writePrivateFile(targetPath, bytes);
 
     let extractedText: string | undefined;
-    if (isTextContentType(contentType)) {
-      const normalizedText = bytes.toString("utf8").trim();
-      if (normalizedText) {
-        extractedText =
-          normalizedText.length > 12_000
-            ? `${normalizedText.slice(0, 12_000).trimEnd()}\n[Truncated]`
-            : normalizedText;
-      }
+    if (normalizedText) {
+      extractedText =
+        normalizedText.length > 12_000
+          ? `${normalizedText.slice(0, 12_000).trimEnd()}\n[Truncated]`
+          : normalizedText;
     }
 
     return NextResponse.json({
       id: fileId,
-      name: file.name || safeName,
+      name: originalName,
       url: `/api/files/${storedName}`,
       contentType,
       extractedText,
     });
   } catch (error) {
     const message = error instanceof Error ? error.message : "Upload failed.";
-    return NextResponse.json({ error: message }, { status: 500 });
+    console.error("File upload failed:", message);
+    return NextResponse.json({ error: "Upload failed validation or storage." }, { status: 500 });
   }
 }
