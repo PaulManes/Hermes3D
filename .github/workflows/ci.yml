@@ -1,15 +1,11 @@
 name: CI
 
 on:
-  workflow_dispatch:
+  pull_request:
   push:
     branches:
-      - hardening/codex-observer
-    paths-ignore:
-      - audit/ci/**
-      - audit/security/**
-      - audit/dependencies/**
-  pull_request:
+      - main
+  workflow_dispatch:
 
 permissions:
   contents: read
@@ -19,137 +15,20 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  macos:
-    name: Verify macOS Apple Silicon
-    runs-on: macos-latest
+  verify:
+    name: Verify (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - macos-latest
+          - ubuntu-latest
+    runs-on: ${{ matrix.os }}
     timeout-minutes: 45
-    permissions:
-      contents: write
     env:
       CI: "true"
       NEXT_TELEMETRY_DISABLED: "1"
       NPM_CONFIG_FUND: "false"
-    steps:
-      - name: Check out repository without persisted credentials
-        uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
-        with:
-          persist-credentials: false
-
-      - name: Use Node.js 24 LTS
-        uses: actions/setup-node@a0853c24544627f65ddf259abe73b1d18a591444 # v5
-        with:
-          node-version: "24"
-          cache: npm
-
-      - name: Run macOS verification suite
-        shell: bash
-        run: |
-          set +e
-          mkdir -p audit/ci/logs
-          {
-            echo "node=$(node --version)"
-            echo "npm=$(npm --version)"
-            echo "runner=${RUNNER_OS}-${RUNNER_ARCH}"
-            echo "commit=${GITHUB_SHA}"
-          } > audit/ci/toolchain.txt
-
-          npm ci --ignore-scripts --strict-peer-deps > audit/ci/logs/install.log 2>&1
-          install_status=$?
-
-          npm rebuild --foreground-scripts > audit/ci/logs/rebuild.log 2>&1
-          rebuild_status=$?
-
-          npm ls --all > audit/ci/logs/dependency-tree.log 2>&1
-          dependency_tree_status=$?
-
-          npm audit --audit-level=low > audit/ci/logs/audit.log 2>&1
-          audit_status=$?
-
-          npm run lint > audit/ci/logs/lint.log 2>&1
-          lint_status=$?
-
-          npm run typecheck > audit/ci/logs/typecheck.log 2>&1
-          typecheck_status=$?
-
-          npm run test -- --run > audit/ci/logs/test.log 2>&1
-          test_status=$?
-
-          npm run build > audit/ci/logs/build.log 2>&1
-          build_status=$?
-
-          npm run smoke:dev-server > audit/ci/logs/smoke.log 2>&1
-          smoke_status=$?
-
-          {
-            echo "install=$install_status"
-            echo "rebuild=$rebuild_status"
-            echo "dependency_tree=$dependency_tree_status"
-            echo "audit=$audit_status"
-            echo "lint=$lint_status"
-            echo "typecheck=$typecheck_status"
-            echo "test=$test_status"
-            echo "build=$build_status"
-            echo "smoke=$smoke_status"
-          } | tee audit/ci/exit-codes.txt
-          exit 0
-
-      - name: Generate macOS verification report
-        if: always()
-        run: node scripts/generate-ci-report.mjs
-
-      - name: Upload macOS verification evidence
-        if: always()
-        uses: actions/upload-artifact@043fb46d1a93c77aae656e7c1c64a875d1fc6a0a # v7.0.1
-        with:
-          name: hermes3d-macos-verification
-          path: audit/ci
-          if-no-files-found: error
-          retention-days: 14
-
-      - name: Publish macOS verification report
-        if: always() && github.event_name == 'push'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ ! -f audit/ci/MACOS.md ]]; then
-            echo "macOS report was not generated."
-            exit 1
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -f -- audit/ci/MACOS.md
-          if git diff --cached --quiet; then
-            echo "macOS verification report is unchanged."
-            exit 0
-          fi
-          git commit -m "chore: publish macOS verification report [skip ci]"
-          git push "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
-            HEAD:hardening/codex-observer
-
-      - name: Enforce macOS verification gates
-        if: always()
-        shell: bash
-        run: |
-          set -euo pipefail
-          if [[ ! -f audit/ci/exit-codes.txt ]]; then
-            echo "Missing macOS verification result file."
-            exit 1
-          fi
-          failed=0
-          while IFS='=' read -r check code; do
-            if [[ -z "$check" || "$code" != "0" ]]; then
-              echo "Failed: ${check:-unknown} (exit ${code:-missing})"
-              failed=1
-            fi
-          done < audit/ci/exit-codes.txt
-          exit "$failed"
-
-  linux:
-    name: Verify Linux
-    runs-on: ubuntu-latest
-    timeout-minutes: 45
     steps:
       - name: Check out repository
         uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
@@ -171,7 +50,7 @@ jobs:
       - name: Validate dependency tree
         run: npm ls --all
 
-      - name: Audit all dependencies
+      - name: Audit dependencies
         run: npm audit --audit-level=low
 
       - name: Lint
