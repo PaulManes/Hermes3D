@@ -51,6 +51,8 @@ const TEXT_CONTENT_TYPES = new Set([
   "application/xml",
 ]);
 
+class UploadValidationError extends Error {}
+
 const uploadsDir = () => path.join(resolveStateDir(), "hermes3d", "uploads");
 
 const isWithin = (candidate: string, root: string): boolean => {
@@ -115,12 +117,12 @@ const matchesMagic = (bytes: Buffer, extension: string): boolean => {
 
 const decodeText = (bytes: Buffer): string => {
   if (bytes.includes(0)) {
-    throw new Error("Text uploads may not contain NUL bytes.");
+    throw new UploadValidationError("Text uploads may not contain NUL bytes.");
   }
   try {
     return new TextDecoder("utf-8", { fatal: true }).decode(bytes);
   } catch {
-    throw new Error("Text upload is not valid UTF-8.");
+    throw new UploadValidationError("Text upload is not valid UTF-8.");
   }
 };
 
@@ -130,7 +132,7 @@ const validateText = (contentType: string, bytes: Buffer): string => {
     try {
       JSON.parse(text);
     } catch {
-      throw new Error("JSON upload is not valid JSON.");
+      throw new UploadValidationError("JSON upload is not valid JSON.");
     }
   }
   return text;
@@ -219,7 +221,7 @@ export async function POST(request: Request) {
     const fileId = crypto.randomBytes(16).toString("hex");
     const storedName = `${fileId}-${safeStem}${extension}`;
     if (Buffer.byteLength(storedName, "utf8") > MAX_STORED_NAME_BYTES) {
-      throw new Error("Stored upload name is too long.");
+      throw new UploadValidationError("Stored upload name is too long.");
     }
 
     const targetDir = await prepareUploadsDir();
@@ -245,6 +247,9 @@ export async function POST(request: Request) {
       extractedText,
     });
   } catch (error) {
+    if (error instanceof UploadValidationError) {
+      return NextResponse.json({ error: error.message }, { status: 400 });
+    }
     const message = error instanceof Error ? error.message : "Upload failed.";
     console.error("File upload failed:", message);
     return NextResponse.json({ error: "Upload failed validation or storage." }, { status: 500 });
