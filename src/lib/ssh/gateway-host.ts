@@ -6,14 +6,54 @@ const SSH_USER_ENV = "HERMES_GATEWAY_SSH_USER";
 const SSH_PORT_ENV = "HERMES_GATEWAY_SSH_PORT";
 const SSH_STRICT_HOST_KEY_ENV = "HERMES_GATEWAY_SSH_STRICT_HOST_KEY_CHECKING";
 
+const DEFAULT_MAX_BUFFER = 4 * 1024 * 1024;
+const MAX_MAX_BUFFER = 16 * 1024 * 1024;
+const DEFAULT_TIMEOUT_MS = 30_000;
+const MAX_TIMEOUT_MS = 120_000;
+const MAX_INPUT_BYTES = 1024 * 1024;
+const MAX_REMOTE_ARG_BYTES = 64 * 1024;
+
+const SSH_TARGET_PATTERN = /^(?:[a-zA-Z0-9._-]+@)?(?:\[[a-fA-F0-9:.%_-]+\]|[a-zA-Z0-9._:%-]+)$/;
+
+export const assertSafeSshTarget = (value: string): string => {
+  const target = value.trim();
+  if (!target) {
+    throw new Error("SSH target is required.");
+  }
+  if (target.length > 512 || target.startsWith("-") || !SSH_TARGET_PATTERN.test(target)) {
+    throw new Error("SSH target contains unsupported characters.");
+  }
+  return target;
+};
+
+export const quotePosixShellArg = (value: string): string =>
+  `'${value.replaceAll("'", `'"'"'`)}'`;
+
+const buildRemoteCommand = (argv: string[]): string => {
+  if (argv.length === 0) {
+    throw new Error("Remote SSH command is required.");
+  }
+  const byteLength = argv.reduce(
+    (total, value) => total + Buffer.byteLength(value, "utf8"),
+    0,
+  );
+  if (byteLength > MAX_REMOTE_ARG_BYTES) {
+    throw new Error("Remote SSH command arguments are too large.");
+  }
+  return argv.map(quotePosixShellArg).join(" ");
+};
+
 export const resolveConfiguredSshTarget = (env: NodeJS.ProcessEnv = process.env): string | null => {
   const configuredTarget = env[SSH_TARGET_ENV]?.trim() ?? "";
   const configuredUser = env[SSH_USER_ENV]?.trim() ?? "";
 
   if (configuredTarget) {
-    if (configuredTarget.includes("@")) return configuredTarget;
-    if (configuredUser) return `${configuredUser}@${configuredTarget}`;
-    return configuredTarget;
+    const combined = configuredTarget.includes("@")
+      ? configuredTarget
+      : configuredUser
+        ? `${configuredUser}@${configuredTarget}`
+        : configuredTarget;
+    return assertSafeSshTarget(combined);
   }
 
   return null;
@@ -88,7 +128,7 @@ export const resolveGatewaySshTargetFromGatewayUrl = (
 
   const configuredUser = env[SSH_USER_ENV]?.trim() ?? "";
   const user = configuredUser || "ubuntu";
-  return `${user}@${hostname}`;
+  return assertSafeSshTarget(`${user}@${hostname}`);
 };
 
 export const resolveGatewaySshTarget = (env: NodeJS.ProcessEnv = process.env): string => {
@@ -139,14 +179,39 @@ export const runSshJson = (params: {
   input?: string;
   fallbackMessage?: string;
   maxBuffer?: number;
+  timeoutMs?: number;
 }): unknown => {
+  const sshTarget = assertSafeSshTarget(params.sshTarget);
+  const remoteCommand = buildRemoteCommand(params.argv);
+
+  if (params.input !== undefined && Buffer.byteLength(params.input, "utf8") > MAX_INPUT_BYTES) {
+    throw new Error("SSH command input is too large.");
+  }
+
+  const maxBuffer = params.maxBuffer ?? DEFAULT_MAX_BUFFER;
+  if (!Number.isInteger(maxBuffer) || maxBuffer < 1 || maxBuffer > MAX_MAX_BUFFER) {
+    throw new Error(`maxBuffer must be between 1 and ${MAX_MAX_BUFFER}.`);
+  }
+
+  const timeout = params.timeoutMs ?? DEFAULT_TIMEOUT_MS;
+  if (!Number.isInteger(timeout) || timeout < 1 || timeout > MAX_TIMEOUT_MS) {
+    throw new Error(`timeoutMs must be between 1 and ${MAX_TIMEOUT_MS}.`);
+  }
+
+  if (
+    params.sshPort !== undefined &&
+    params.sshPort !== null &&
+    (!Number.isInteger(params.sshPort) || params.sshPort < 1 || params.sshPort > 65_535)
+  ) {
+    throw new Error("SSH port must be between 1 and 65535.");
+  }
+
   const options: childProcess.SpawnSyncOptionsWithStringEncoding = {
     encoding: "utf8",
     input: params.input,
+    maxBuffer,
+    timeout,
   };
-  if (params.maxBuffer !== undefined) {
-    options.maxBuffer = params.maxBuffer;
-  }
 
   const sshArgs = [
     "-o",
@@ -157,11 +222,19 @@ export const runSshJson = (params: {
   if (typeof params.sshPort === "number") {
     sshArgs.push("-p", String(params.sshPort));
   }
-  sshArgs.push(params.sshTarget, ...params.argv);
+  // OpenSSH sends the remote command through the destination account's shell.
+  // Pass one POSIX-quoted command string so untrusted values remain data rather
+  // than becoming additional shell syntax on the remote host.
+  sshArgs.push(sshTarget, remoteCommand);
 
-  const result = childProcess.spawnSync("ssh", sshArgs, { ...options });
+  const result = childProcess.spawnSync("ssh", sshArgs, options);
   if (result.error) {
-    throw new Error(`Failed to execute ssh: ${result.error.message}`);
+    const timedOut = "code" in result.error && result.error.code === "ETIMEDOUT";
+    throw new Error(
+      timedOut
+        ? `SSH command timed out (${params.label}).`
+        : `Failed to execute ssh: ${result.error.message}`,
+    );
   }
   const stdout = result.stdout ?? "";
   const stderr = result.stderr ?? "";
