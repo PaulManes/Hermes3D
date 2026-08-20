@@ -71,7 +71,7 @@ describe("agent state route", () => {
     expect(response.status).toBe(400);
   });
 
-  it("moves agent state via ssh", async () => {
+  it("moves agent state via a single quoted SSH command", async () => {
     writeStudioSettings("ws://example.test:18789");
 
     mockedSpawnSync.mockReturnValueOnce({
@@ -95,26 +95,20 @@ describe("agent state route", () => {
     const [cmd, args, options] = mockedSpawnSync.mock.calls[0] as [
       string,
       string[],
-      { encoding?: string; input?: string }
+      { encoding?: string; input?: string; timeout?: number }
     ];
     expect(cmd).toBe("ssh");
-    expect(args).toEqual(
-      expect.arrayContaining([
-        "-o",
-        "BatchMode=yes",
-        "ubuntu@example.test",
-        "bash",
-        "-s",
-        "--",
-        "my-agent",
-      ])
-    );
+    expect(args).toEqual(expect.arrayContaining(["-o", "BatchMode=yes"]));
+    expect(args.at(-2)).toBe("ubuntu@example.test");
+    expect(args.at(-1)).toBe(`'bash' '-s' '--' 'my-agent'`);
+    expect(args).not.toContain("my-agent");
     expect(options.encoding).toBe("utf8");
     expect(options.input).toContain("python3 - \"$1\"");
     expect(options.input).toContain("workspace-{agent_id}");
+    expect(options.timeout).toBe(30_000);
   });
 
-  it("restores agent state via ssh", async () => {
+  it("restores agent state via a quoted SSH command", async () => {
     writeStudioSettings("ws://example.test:18789");
 
     mockedSpawnSync.mockReturnValueOnce({
@@ -128,7 +122,7 @@ describe("agent state route", () => {
       new Request("http://localhost/api/gateway/agent-state", {
         method: "PUT",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ agentId: "my-agent", trashDir: "/tmp/trash" }),
+        body: JSON.stringify({ agentId: "my-agent", trashDir: "/tmp/trash; touch /tmp/pwn" }),
       })
     );
 
@@ -137,18 +131,11 @@ describe("agent state route", () => {
 
     const [cmd, args] = mockedSpawnSync.mock.calls[0] as [string, string[]];
     expect(cmd).toBe("ssh");
-    expect(args).toEqual(
-      expect.arrayContaining([
-        "-o",
-        "BatchMode=yes",
-        "ubuntu@example.test",
-        "bash",
-        "-s",
-        "--",
-        "my-agent",
-        "/tmp/trash",
-      ])
+    expect(args.at(-2)).toBe("ubuntu@example.test");
+    expect(args.at(-1)).toBe(
+      `'bash' '-s' '--' 'my-agent' '/tmp/trash; touch /tmp/pwn'`,
     );
+    expect(args).not.toContain("/tmp/trash; touch /tmp/pwn");
   });
 
   it("uses configured ssh target without studio settings", async () => {
@@ -174,6 +161,6 @@ describe("agent state route", () => {
 
     const [cmd, args] = mockedSpawnSync.mock.calls[0] as [string, string[]];
     expect(cmd).toBe("ssh");
-    expect(args).toEqual(expect.arrayContaining(["me@host.test"]));
+    expect(args.at(-2)).toBe("me@host.test");
   });
 });
