@@ -181,7 +181,7 @@ describe("Codex Observer core", () => {
     expect(classifyTool("Bash")).toBe("terminal");
     expect(classifyTool("apply_patch")).toBe("coding");
     expect(classifyTool("mcp__github__get_file")).toBe("integration");
-    expect(classifyTool("search_files")).toBe("research");
+    expect(classifyTool("search")).toBe("research");
     expect(redactText("API_KEY=abc123")).toBe("API_KEY=[REDACTED]");
   });
 });
